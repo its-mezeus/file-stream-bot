@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ File Stream Bot - Download</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .brand {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-bottom: 30px;
+        }
+
+        .file-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .file-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .file-name {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            word-break: break-all;
+            margin-bottom: 16px;
+        }
+
+        .file-details {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 4px;
+        }
+
+        .detail {
+            text-align: center;
+        }
+
+        .detail-label {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .countdown {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .countdown span {
+            color: #ffd700;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #1a1a2e;
+            text-decoration: none;
+            padding: 14px 48px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .download-btn:disabled {
+            background: rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.4);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .footer {
+            margin-top: 24px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffaa00);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 1s linear;
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 4px 12px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">⚡</div>
+        <div class="brand">File Stream Bot</div>
+        <div class="tagline">Fast & Secure File Sharing</div>
+
+        <div class="file-card">
+            <div class="file-icon">{file_icon}</div>
+            <div class="file-name">{file_name}</div>
+            <div class="file-details">
+                <div class="detail">
+                    <div class="detail-label">Size</div>
+                    <div class="detail-value">{file_size}</div>
+                </div>
+                <div class="detail">
+                    <div class="detail-label">Type</div>
+                    <div class="detail-value">{file_type}</div>
+                </div>
+                <div class="detail">
+                    <div class="detail-label">Downloads</div>
+                    <div class="detail-value">{download_count}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="countdown" id="countdown">
+            Starting download in <span id="timer">5</span> seconds...
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+
+        <a href="{download_url}" id="downloadBtn" class="download-btn" disabled>
+            ⏳ Please wait...
+        </a>
+
+        <div class="stats-row">
+            <span class="stat-badge">🔒 Secure</span>
+            <span class="stat-badge">⚡ Fast</span>
+            <span class="stat-badge">🌐 Direct</span>
+        </div>
+
+        <div class="footer">
+            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
+        </div>
+    </div>
+
+    <script>
+        let seconds = 5;
+        const timer = document.getElementById('timer');
+        const btn = document.getElementById('downloadBtn');
+        const progress = document.getElementById('progress');
+        const countdown = document.getElementById('countdown');
+
+        const interval = setInterval(() => {
+            seconds--;
+            timer.textContent = seconds;
+            progress.style.width = ((5 - seconds) / 5 * 100) + '%';
+
+            if (seconds <= 0) {
+                clearInterval(interval);
+                countdown.innerHTML = '✅ Ready to download!';
+                btn.removeAttribute('disabled');
+                btn.textContent = '📥 DOWNLOAD NOW';
+                progress.style.width = '100%';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
