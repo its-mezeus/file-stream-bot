@@ -841,7 +841,7 @@ To use this bot, you must join our channel(s):
     # User has joined - show welcome
     bot_me = await client.get_me()
     
-    text = f"""🌟 <b>Welcome To File To Link Bot</b> 🌟
+    text = f"""🌟 <a href="https://t.me/{bot_me.username}">FILE STREAM BOT</a> 🌟
 
 Hey <a href="tg://user?id={user_id}">{name}</a>! 👋
 
@@ -897,7 +897,7 @@ async def callbacks(client, query):
         name = query.from_user.first_name
         user_id = query.from_user.id
         
-        text = f"""🌟 <b>Welcome To File To Link Bot</b> 🌟
+        text = f"""🌟 <a href="https://t.me/{bot_me.username}">FILE STREAM BOT</a> 🌟
 
 Hey <a href="tg://user?id={user_id}">{name}</a>! 👋
 
@@ -995,7 +995,7 @@ Send me any file and get instant download link!
         name = query.from_user.first_name
         user_id = query.from_user.id
         
-        text = f"""🌟 <b>Welcome To File To Link Bot</b> 🌟
+        text = f"""🌟 <a href="https://t.me/{bot_me.username}">FILE STREAM BOT</a> 🌟
 
 Hey <a href="tg://user?id={user_id}">{name}</a>! 👋
 
@@ -1415,11 +1415,6 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
                 countdown.innerHTML = '✅ Ready to download!';
                 btn.classList.remove('disabled');
                 btn.textContent = '📥 DOWNLOAD NOW';
-                btn.style.pointerEvents = 'auto';
-                btn.addEventListener('click', function(e) {{
-                    e.preventDefault();
-                    window.location.href = btn.href;
-                }});
                 progress.style.width = '100%';
             }}
         }}, 1000);
@@ -1524,119 +1519,42 @@ async def download_page(req):
 
 @routes.get('/stream/{file_hash}')
 async def stream_file(req):
-    """Stream actual file from Telegram with range request support for pause/resume"""
-    from urllib.parse import quote
-    
+    """Stream actual file from Telegram"""
     file_hash = req.match_info['file_hash']
     
     if file_hash not in file_map:
         return web.Response(text="404 - File not found", status=404)
     
     info = file_map[file_hash]
-    file_size = info['size']
-    CHUNK_SIZE = 1024 * 1024  # 1MB (Pyrogram chunk size)
     
     try:
         msg = await bot.get_messages(info['chat_id'], info['message_id'])
         
-        # Sanitize filename for Content-Disposition
-        safe_name = info["name"].encode('ascii', 'ignore').decode('ascii') or "download"
-        utf8_name = info["name"]
-        disposition = f'attachment; filename="{safe_name}"; filename*=UTF-8\'\'{quote(utf8_name)}'
-        
-        # Parse Range header for pause/resume support
-        range_header = req.headers.get('Range', '')
-        start = 0
-        end = file_size - 1
-        
-        if range_header and range_header.startswith('bytes='):
-            range_val = range_header.replace('bytes=', '')
-            parts = range_val.split('-')
-            if parts[0]:
-                start = int(parts[0])
-            if parts[1]:
-                end = int(parts[1])
-            
-            # Validate range
-            if start >= file_size or start > end:
-                return web.Response(
-                    status=416,
-                    headers={'Content-Range': f'bytes */{file_size}'}
-                )
-            
-            content_length = end - start + 1
-            
-            response = web.StreamResponse(
-                status=206,
-                headers={
-                    'Content-Type': 'application/octet-stream',
-                    'Content-Disposition': disposition,
-                    'Content-Length': str(content_length),
-                    'Content-Range': f'bytes {start}-{end}/{file_size}',
-                    'Accept-Ranges': 'bytes',
-                    'Cache-Control': 'no-cache',
-                    'X-Content-Type-Options': 'nosniff',
-                }
-            )
-        else:
-            # Full download
-            response = web.StreamResponse(
-                status=200,
-                headers={
-                    'Content-Type': 'application/octet-stream',
-                    'Content-Disposition': disposition,
-                    'Content-Length': str(file_size),
-                    'Accept-Ranges': 'bytes',
-                    'Cache-Control': 'no-cache',
-                    'X-Content-Type-Options': 'nosniff',
-                }
-            )
+        response = web.StreamResponse(
+            status=200,
+            headers={
+                'Content-Type': 'application/octet-stream',
+                'Content-Disposition': f'attachment; filename="{info["name"]}"',
+                'Content-Length': str(info['size'])
+            }
+        )
         
         await response.prepare(req)
         
-        # Calculate chunk offset and how many bytes to skip in first chunk
-        chunk_offset = start // CHUNK_SIZE
-        skip_bytes = start % CHUNK_SIZE
-        bytes_sent = 0
-        bytes_to_send = end - start + 1
+        print(f"Streaming {info['name']}...")
         
-        if start > 0:
-            print(f"Resuming {info['name']} from {start / (1024*1024):.1f}MB...")
-        else:
-            print(f"Streaming {info['name']}...")
-        
-        async for chunk in bot.stream_media(msg, offset=chunk_offset):
-            if bytes_sent >= bytes_to_send:
-                break
-            
-            data = chunk
-            
-            # Skip bytes in first chunk if resuming mid-chunk
-            if skip_bytes > 0:
-                data = data[skip_bytes:]
-                skip_bytes = 0
-            
-            # Trim last chunk if needed
-            remaining = bytes_to_send - bytes_sent
-            if len(data) > remaining:
-                data = data[:remaining]
-            
-            await response.write(data)
-            bytes_sent += len(data)
+        async for chunk in bot.stream_media(msg):
+            await response.write(chunk)
         
         await response.write_eof()
-        print(f"✅ Streamed {info['name']} ({bytes_sent / (1024*1024):.1f}MB)")
+        print(f"✅ Streamed {info['name']}")
         
-        # Track download (only for full downloads)
-        if start == 0:
-            stats['total_downloads'] += 1
-            info['downloads'] = info.get('downloads', 0) + 1
+        # Track download
+        stats['total_downloads'] += 1
+        info['downloads'] = info.get('downloads', 0) + 1
         
         return response
         
-    except ConnectionResetError:
-        print(f"⚠️ Client disconnected: {info['name']}")
-        return response
     except Exception as e:
         print(f"Stream error: {e}")
         return web.Response(text=f"Error: {e}", status=500)
