@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-File To Link Bot - HTTP Downloads
+File Stream Bot - HTTP Downloads
 Streams files from Telegram via HTTP
 By Zeus ⚡
 """
@@ -77,7 +77,7 @@ file_map = {}
 bot = Client("streambot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 userbot = Client("stream_user", api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING)
 
-print("🤖 File To Link Bot")
+print("🤖 File Stream Bot")
 print("⚡ HTTP Downloads via Cloudflare")
 print(f"🌐 {PUBLIC_URL}")
 
@@ -703,7 +703,7 @@ async def bot_on(client, message):
 ⏰ <b>Time:</b> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} UTC
 
 ━━━━━━━━━━━━
-⚡ <i>File To Link Bot is Online!</i>"""
+⚡ <i>File Stream Bot is Online!</i>"""
         
         await message.reply(text, parse_mode=enums.ParseMode.HTML)
         await client.send_message(LOG_CHANNEL, log_text, parse_mode=enums.ParseMode.HTML)
@@ -1128,7 +1128,6 @@ Click the button(s) below to join:
             db.increment_user_files(message.from_user.id)
         
         # Get file info
-        duration = 0  # seconds
         if message.document:
             file = message.document
             name = file.file_name
@@ -1137,12 +1136,10 @@ Click the button(s) below to join:
             file = message.video
             name = file.file_name or f"video_{int(datetime.now().timestamp())}.mp4"
             size = file.file_size
-            duration = file.duration or 0
         elif message.audio:
             file = message.audio
             name = file.file_name or f"audio_{int(datetime.now().timestamp())}.mp3"
             size = file.file_size
-            duration = file.duration or 0
         elif message.photo:
             file = message.photo
             name = f"photo_{int(datetime.now().timestamp())}.jpg"
@@ -1201,8 +1198,7 @@ Click the button(s) below to join:
             'chat_id': LOG_CHANNEL,
             'message_id': fwd.id,
             'name': name,
-            'size': size,
-            'duration': duration
+            'size': size
         }
         
         # Size display
@@ -1222,16 +1218,7 @@ Click the button(s) below to join:
 ━━━━━━━━━━━━
 ⚡ <i>By Zeus</i>"""
         
-        # Check if video file — add Watch Online button
-        video_exts = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.flv', '.wmv', '.m4v', '.3gp')
-        watch_link = dl_link.replace('/download/', '/watch/')
-        if name.lower().endswith(video_exts):
-            kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("📥 Download", url=dl_link)],
-                [InlineKeyboardButton("▶️ Watch Online", url=watch_link)]
-            ])
-        else:
-            kb = InlineKeyboardMarkup([[InlineKeyboardButton("📥 Download", url=dl_link)]])
+        kb = InlineKeyboardMarkup([[InlineKeyboardButton("📥 Download", url=dl_link)]])
         
         await msg.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
         print(f"✅ {name} ({size_display})")
@@ -1246,7 +1233,7 @@ routes = web.RouteTableDef()
 
 @routes.get('/')
 async def home(req):
-    return web.Response(text="<h1>⚡ File To Link Bot by Zeus ⚡</h1>", content_type='text/html')
+    return web.Response(text="<h1>⚡ File Stream Bot by Zeus ⚡</h1>", content_type='text/html')
 
 def get_file_icon(filename):
     """Get emoji icon based on file extension"""
@@ -1281,7 +1268,7 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ File To Link Bot - Download</title>
+    <title>⚡ File Stream Bot - Download</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
@@ -1362,33 +1349,13 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
             color: rgba(255, 255, 255, 0.5);
             font-size: 11px;
         }}
-        .watch-btn {{
-            display: inline-block;
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
-            color: #fff;
-            text-decoration: none;
-            padding: 14px 48px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 12px;
-        }}
-        .watch-btn:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.3);
-        }}
         .not-found {{ color: rgba(255,255,255,0.7); font-size: 18px; margin: 40px 0; }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">⚡</div>
-        <div class="brand">File To Link Bot</div>
+        <div class="brand">File Stream Bot</div>
         <div class="tagline">Fast & Secure File Sharing</div>
         <div class="file-card">
             <div class="file-icon">{file_icon}</div>
@@ -1417,7 +1384,6 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
         <a href="{download_url}" id="downloadBtn" class="download-btn disabled">
             ⏳ Please wait...
         </a>
-        {watch_button}
         <div class="stats-row">
             <span class="stat-badge">🔒 Secure</span>
             <span class="stat-badge">⚡ Fast</span>
@@ -1510,7 +1476,7 @@ NOT_FOUND_PAGE = """<!DOCTYPE html>
 <body>
     <div class="container">
         <div class="logo">⚡</div>
-        <div class="brand">File To Link Bot</div>
+        <div class="brand">File Stream Bot</div>
         <div class="tagline">Fast & Secure File Sharing</div>
         <div class="not-found">❌ File not found or link expired</div>
         <a href="https://t.me/Filetolinkzeus_bot" class="home-btn">🤖 Go to Bot</a>
@@ -1545,347 +1511,15 @@ async def download_page(req):
     # Download count
     dl_count = info.get('downloads', 0)
     
-    # Check if file is a video for watch button
-    video_exts = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.flv', '.wmv', '.m4v', '.3gp')
-    is_video = name.lower().endswith(video_exts)
-    watch_button = f'<a href="/watch/{file_hash}" class="watch-btn">▶️ WATCH ONLINE</a>' if is_video else ''
-    
     html = DOWNLOAD_PAGE_TEMPLATE.format(
         file_icon=get_file_icon(name),
         file_name=name,
         file_size=size_display,
         file_type=get_file_type(name),
         download_count=dl_count,
-        download_url=f"/stream/{file_hash}",
-        watch_button=watch_button
+        download_url=f"/stream/{file_hash}"
     )
     
-    return web.Response(text=html, content_type='text/html')
-
-@routes.get('/transcode/{file_hash}')
-async def transcode_stream(req):
-    """Transcode video to MP4 (H264+AAC) on-the-fly for browser playback"""
-    import subprocess
-    
-    file_hash = req.match_info['file_hash']
-    if file_hash not in file_map:
-        return web.Response(text="404", status=404)
-    
-    info = file_map[file_hash]
-    
-    try:
-        msg = await bot.get_messages(info['chat_id'], info['message_id'])
-        
-        response = web.StreamResponse(
-            status=200,
-            headers={
-                'Content-Type': 'video/mp4',
-                'Transfer-Encoding': 'chunked',
-                'Cache-Control': 'no-cache',
-                'Accept-Ranges': 'none',
-            }
-        )
-        await response.prepare(req)
-        
-        # Start ffmpeg process: read from stdin, output fragmented MP4 to stdout
-        ffmpeg = await asyncio.create_subprocess_exec(
-            'ffmpeg', '-i', 'pipe:0',
-            '-c:v', 'copy',        # Keep video codec (no re-encoding)
-            '-c:a', 'aac',         # Transcode audio to AAC (browser compatible)
-            '-b:a', '192k',
-            '-movflags', 'frag_keyframe+empty_moov+default_base_moof',
-            '-f', 'mp4',
-            '-y', 'pipe:1',
-            stdin=asyncio.subprocess.PIPE,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.DEVNULL
-        )
-        
-        print(f"🔄 Transcoding {info['name']}...")
-        
-        # Feed Telegram stream into ffmpeg stdin
-        async def feed_ffmpeg():
-            try:
-                async for chunk in bot.stream_media(msg):
-                    ffmpeg.stdin.write(chunk)
-                    await ffmpeg.stdin.drain()
-                ffmpeg.stdin.close()
-            except Exception as e:
-                print(f"Feed error: {e}")
-                try:
-                    ffmpeg.stdin.close()
-                except:
-                    pass
-        
-        # Start feeding in background
-        feed_task = asyncio.create_task(feed_ffmpeg())
-        
-        # Read ffmpeg output and send to client
-        try:
-            while True:
-                chunk = await ffmpeg.stdout.read(65536)  # 64KB chunks
-                if not chunk:
-                    break
-                await response.write(chunk)
-        except ConnectionResetError:
-            print(f"⚠️ Client disconnected during transcode: {info['name']}")
-        finally:
-            feed_task.cancel()
-            try:
-                ffmpeg.kill()
-            except:
-                pass
-        
-        await response.write_eof()
-        print(f"✅ Transcoded {info['name']}")
-        return response
-        
-    except Exception as e:
-        print(f"Transcode error: {e}")
-        return web.Response(text=f"Error: {e}", status=500)
-
-@routes.get('/watch/{file_hash}')
-async def watch_page(req):
-    """Online video player page"""
-    file_hash = req.match_info['file_hash']
-    
-    if file_hash not in file_map:
-        return web.Response(text=NOT_FOUND_PAGE, content_type='text/html', status=404)
-    
-    info = file_map[file_hash]
-    name = info['name']
-    size = info['size']
-    duration = info.get('duration', 0)
-    
-    if size >= 1024 * 1024 * 1024:
-        size_display = f"{size / (1024 * 1024 * 1024):.2f} GB"
-    elif size >= 1024 * 1024:
-        size_display = f"{size / (1024 * 1024):.2f} MB"
-    else:
-        size_display = f"{size / 1024:.2f} KB"
-    
-    # Duration display
-    if duration > 0:
-        hours = duration // 3600
-        mins = (duration % 3600) // 60
-        secs = duration % 60
-        if hours > 0:
-            duration_display = f"{hours}h {mins}m {secs}s"
-        else:
-            duration_display = f"{mins}m {secs}s"
-    else:
-        duration_display = "Unknown"
-    
-    # Detect mime type for video
-    ext = name.rsplit('.', 1)[-1].lower() if '.' in name else ''
-    mime_map = {
-        'mp4': 'video/mp4', 'mkv': 'video/x-matroska', 'avi': 'video/x-msvideo',
-        'mov': 'video/quicktime', 'webm': 'video/webm', 'flv': 'video/x-flv',
-        'wmv': 'video/x-ms-wmv', 'm4v': 'video/mp4', '3gp': 'video/3gpp'
-    }
-    video_mime = mime_map.get(ext, 'video/mp4')
-    
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>▶️ {name} — Stream Online</title>
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }}
-        .player-container {{
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 900px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            margin-top: 10px;
-        }}
-        .video-wrapper {{
-            position: relative;
-            width: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #000;
-            aspect-ratio: 16/9;
-        }}
-        video {{
-            width: 100%;
-            height: 100%;
-            border-radius: 12px;
-            background: #000;
-        }}
-        .video-info {{
-            padding: 16px 4px 4px;
-        }}
-        .video-title {{
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            word-break: break-all;
-            margin-bottom: 8px;
-        }}
-        .video-meta {{
-            display: flex;
-            gap: 16px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 13px;
-        }}
-        .video-meta span {{
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }}
-        .btn-row {{
-            display: flex;
-            gap: 10px;
-            margin-top: 16px;
-        }}
-        .dl-btn {{
-            flex: 1;
-            display: inline-block;
-            background: linear-gradient(135deg, #ffd700, #ffaa00);
-            color: #1a1a2e;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 700;
-            text-align: center;
-            transition: all 0.3s ease;
-        }}
-        .dl-btn:hover {{
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
-        }}
-        .back-btn {{
-            flex: 1;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #fff;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 700;
-            text-align: center;
-            transition: all 0.3s ease;
-        }}
-        .back-btn:hover {{
-            background: rgba(255, 255, 255, 0.2);
-        }}
-        .footer {{
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 12px;
-            text-align: center;
-        }}
-        .footer a {{ color: #ffd700; text-decoration: none; }}
-        .tip {{
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid rgba(255, 215, 0, 0.2);
-            border-radius: 10px;
-            padding: 10px 14px;
-            margin-top: 12px;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-        }}
-        .tip b {{ color: #ffd700; }}
-    </style>
-</head>
-<body>
-    <div class="player-container">
-        <div class="video-wrapper" id="videoWrapper">
-            <video id="player" controls autoplay playsinline preload="auto"></video>
-        </div>
-        <div class="video-info">
-            <div class="video-title">🎬 {name}</div>
-            <div class="video-meta">
-                <span>📦 {size_display}</span>
-                <span>🎞️ {ext.upper()}</span>
-                <span>⏱️ {duration_display}</span>
-            </div>
-            <div id="status-bar" class="tip" style="display:none;"></div>
-            <div class="btn-row">
-                <a href="/download/{file_hash}" class="dl-btn">📥 Download</a>
-            </div>
-            <div class="tip">
-                💡 <b>Tip:</b> All formats supported (MP4, MKV, AVI etc). If buffering, let it load for a few seconds.
-            </div>
-            <div class="tip" style="background: rgba(255, 80, 80, 0.1); border-color: rgba(255, 80, 80, 0.2);">
-                ⚠️ <b>Multi-Audio Notice:</b> If the movie has 2 or more audio languages, the browser will only play the default track. <b>Download the file</b> and use <b>VLC / MX Player</b> to switch between audio languages.
-            </div>
-            <!-- Native Banner Ad -->
-            <div style="margin-top: 16px;">
-                <script async="async" data-cfasync="false" src="https://pl29132271.profitablecpmratenetwork.com/b5ae8d1752449b50291c54b76c329274/invoke.js"></script>
-                <div id="container-b5ae8d1752449b50291c54b76c329274"></div>
-            </div>
-        </div>
-    </div>
-    <script>
-        const video = document.getElementById('player');
-        const directUrl = '/stream/{file_hash}';
-        const transcodeUrl = '/transcode/{file_hash}';
-        const ext = '{ext}'.toLowerCase();
-        const statusBar = document.getElementById('status-bar');
-        
-        function showStatus(msg) {{
-            statusBar.style.display = 'block';
-            statusBar.innerHTML = msg;
-        }}
-        
-        // All formats — try direct stream first (with video content type + range support = seekable)
-        showStatus('⏳ <b>Loading video...</b>');
-        video.src = directUrl + '?play=1';
-        video.load();
-        
-        video.addEventListener('playing', function() {{
-            statusBar.style.display = 'none';
-        }});
-        
-        video.addEventListener('canplay', function() {{
-            statusBar.style.display = 'none';
-        }});
-        
-        // If direct fails (codec issue), try transcoded version
-        video.addEventListener('error', function() {{
-            if (video.src.indexOf('transcode') === -1) {{
-                showStatus('🔄 <b>Converting for playback...</b> This may take a moment');
-                video.src = transcodeUrl;
-                video.load();
-                video.play();
-            }}
-        }});
-        
-        // If nothing works after 20s, show help
-        let playStarted = false;
-        video.addEventListener('playing', function() {{ playStarted = true; }});
-        setTimeout(function() {{
-            if (!playStarted) {{
-                showStatus('⚠️ <b>Not playing?</b> Try <a href="' + directUrl + '" style="color:#ffd700">downloading</a> and playing with VLC/MX Player.');
-            }}
-        }}, 20000);
-    </script>
-    <!-- Social Bar Ad -->
-    <script src="https://pl29132270.profitablecpmratenetwork.com/f3/b6/cf/f3b6cff595821203898a30c16f36762d.js"></script>
-    <div class="footer">
-        Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
-    </div>
-</body>
-</html>"""
     return web.Response(text=html, content_type='text/html')
 
 @routes.get('/stream/{file_hash}')
@@ -1909,19 +1543,6 @@ async def stream_file(req):
         safe_name = info["name"].encode('ascii', 'ignore').decode('ascii') or "download"
         utf8_name = info["name"]
         disposition = f'attachment; filename="{safe_name}"; filename*=UTF-8\'\'{quote(utf8_name)}'
-        
-        # Detect content type — use video mime for streaming, octet-stream for downloads
-        ext = info["name"].rsplit('.', 1)[-1].lower() if '.' in info["name"] else ''
-        video_mimes = {
-            'mp4': 'video/mp4', 'mkv': 'video/x-matroska', 'avi': 'video/x-msvideo',
-            'mov': 'video/quicktime', 'webm': 'video/webm', 'flv': 'video/x-flv',
-            'wmv': 'video/x-ms-wmv', 'm4v': 'video/mp4', '3gp': 'video/3gpp'
-        }
-        referer = req.headers.get('Referer', '')
-        is_stream = '/watch/' in referer or req.query.get('play') == '1'
-        content_type = video_mimes.get(ext, 'application/octet-stream') if is_stream else 'application/octet-stream'
-        if is_stream:
-            disposition = f'inline; filename="{safe_name}"'
         
         # Parse Range header for pause/resume support
         range_header = req.headers.get('Range', '')
@@ -1948,7 +1569,7 @@ async def stream_file(req):
             response = web.StreamResponse(
                 status=206,
                 headers={
-                    'Content-Type': content_type,
+                    'Content-Type': 'application/octet-stream',
                     'Content-Disposition': disposition,
                     'Content-Length': str(content_length),
                     'Content-Range': f'bytes {start}-{end}/{file_size}',
@@ -1962,7 +1583,7 @@ async def stream_file(req):
             response = web.StreamResponse(
                 status=200,
                 headers={
-                    'Content-Type': content_type,
+                    'Content-Type': 'application/octet-stream',
                     'Content-Disposition': disposition,
                     'Content-Length': str(file_size),
                     'Accept-Ranges': 'bytes',
@@ -2087,7 +1708,7 @@ async def main():
 ⏰ <b>Time:</b> {start_time} UTC
 
 ━━━━━━━━━━━━
-⚡ <i>File To Link Bot is Online!</i>"""
+⚡ <i>File Stream Bot is Online!</i>"""
     
     await bot.send_message(LOG_CHANNEL, start_msg, parse_mode=enums.ParseMode.HTML)
     
@@ -2103,7 +1724,7 @@ async def main():
 ⏰ <b>Time:</b> {stop_time} UTC
 
 ━━━━━━━━━━━━
-🔴 <i>File To Link Bot is Offline!</i>"""
+🔴 <i>File Stream Bot is Offline!</i>"""
     
     try:
         await bot.send_message(LOG_CHANNEL, stop_msg, parse_mode=enums.ParseMode.HTML)
