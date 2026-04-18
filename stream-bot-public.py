@@ -1262,6 +1262,16 @@ def get_file_icon(filename):
     }
     return icons.get(ext, '📁')
 
+import string as _string
+
+# Load HTML templates from files (avoids {{ }} escaping hell)
+def _load_template(name):
+    tpl_path = os.path.join(os.path.dirname(__file__), 'templates', name)
+    with open(tpl_path, 'r') as f:
+        return _string.Template(f.read())
+
+DOWNLOAD_TPL = _load_template('download.html')
+
 def get_file_type(filename):
     """Get file type label based on extension"""
     ext = filename.rsplit('.', 1)[-1].lower() if '.' in filename else ''
@@ -1548,9 +1558,9 @@ async def download_page(req):
     # Check if file is a video for watch button
     video_exts = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.flv', '.wmv', '.m4v', '.3gp')
     is_video = name.lower().endswith(video_exts)
-    watch_button = f'<a href="/watch/{file_hash}" class="watch-btn">▶️ WATCH ONLINE</a>' if is_video else ''
+    watch_button = f'<a href="/watch/{file_hash}" class="btn btn-watch">▶️ Watch Online</a>' if is_video else ''
     
-    html = DOWNLOAD_PAGE_TEMPLATE.format(
+    html = DOWNLOAD_TPL.safe_substitute(
         file_icon=get_file_icon(name),
         file_name=name,
         file_size=size_display,

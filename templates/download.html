@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ File To Link Bot - Download</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0f;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 30% 20%, rgba(88, 28, 255, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 80%, rgba(255, 154, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(0, 212, 255, 0.05) 0%, transparent 50%);
+            animation: bgPulse 8s ease-in-out infinite alternate;
+            z-index: -1;
+        }
+        @keyframes bgPulse {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-2%, -2%) scale(1.05); }
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 0;
+            max-width: 440px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03), 0 24px 80px rgba(0, 0, 0, 0.6);
+        }
+        .header {
+            background: linear-gradient(135deg, rgba(88, 28, 255, 0.2), rgba(255, 154, 0, 0.1));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 215, 0, 0.08);
+            border-radius: 50%;
+            filter: blur(30px);
+        }
+        .brand-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ffd700, #ff9a00);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 16px rgba(255, 215, 0, 0.25);
+        }
+        .brand-text {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        .tagline {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 11px;
+            margin-top: 6px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+        .content { padding: 24px; }
+        .file-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .file-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .file-icon-box {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(88, 28, 255, 0.2), rgba(88, 28, 255, 0.1));
+            border: 1px solid rgba(88, 28, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+        .file-info { flex: 1; min-width: 0; }
+        .file-name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+        .file-meta {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .meta-chip {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+        .meta-chip.size { color: #ffd700; border-color: rgba(255, 215, 0, 0.15); background: rgba(255, 215, 0, 0.06); }
+        .meta-chip.type { color: #00d4ff; border-color: rgba(0, 212, 255, 0.15); background: rgba(0, 212, 255, 0.06); }
+        .meta-chip.downloads { color: #a78bfa; border-color: rgba(167, 139, 250, 0.15); background: rgba(167, 139, 250, 0.06); }
+        .card-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.06);
+            margin: 0 -20px;
+        }
+        .file-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 14px;
+        }
+        .stat-item { text-align: center; }
+        .stat-value { color: #fff; font-size: 15px; font-weight: 700; }
+        .stat-label { color: rgba(255, 255, 255, 0.3); font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+        .countdown-section { text-align: center; margin-bottom: 20px; }
+        .countdown-text { color: rgba(255, 255, 255, 0.5); font-size: 13px; margin-bottom: 10px; }
+        .countdown-text span { color: #ffd700; font-weight: 700; font-size: 16px; }
+        .progress-track { width: 100%; height: 3px; background: rgba(255, 255, 255, 0.06); border-radius: 4px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #ffd700, #ff9a00); border-radius: 4px; width: 0%; transition: width 1s linear; box-shadow: 0 0 12px rgba(255, 215, 0, 0.3); }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            letter-spacing: 0.3px;
+        }
+        .btn-download {
+            background: linear-gradient(135deg, #ffd700, #ff9a00);
+            color: #0a0a0f;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
+        }
+        .btn-download:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
+        .btn-download.disabled {
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.25);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            pointer-events: none;
+        }
+        .btn-watch {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+        .btn-watch:hover {
+            background: rgba(0, 212, 255, 0.15);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.15);
+        }
+        .trust-row { display: flex; justify-content: center; gap: 16px; margin-bottom: 20px; }
+        .trust-badge { display: flex; align-items: center; gap: 4px; color: rgba(255, 255, 255, 0.3); font-size: 11px; font-weight: 500; }
+        .trust-badge .dot { width: 6px; height: 6px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 6px rgba(34, 197, 94, 0.4); }
+        .footer-section { text-align: center; padding: 16px 24px; border-top: 1px solid rgba(255, 255, 255, 0.04); background: rgba(0, 0, 0, 0.2); }
+        .footer-text { color: rgba(255, 255, 255, 0.2); font-size: 11px; }
+        .footer-text a { color: rgba(255, 215, 0, 0.5); text-decoration: none; font-weight: 500; }
+        .footer-text a:hover { color: #ffd700; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .container { animation: fadeInUp 0.5s ease; }
+        .file-card { animation: fadeInUp 0.5s ease 0.1s both; }
+        .countdown-section { animation: fadeInUp 0.5s ease 0.2s both; }
+        .btn-group { animation: fadeInUp 0.5s ease 0.3s both; }
+        @keyframes btnGlow {
+            0%, 100% { box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2); }
+            50% { box-shadow: 0 4px 30px rgba(255, 215, 0, 0.4); }
+        }
+        .btn-download.ready { animation: btnGlow 2s ease-in-out infinite; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand-row">
+                <div class="brand-icon">⚡</div>
+                <div class="brand-text">File To Link Bot</div>
+            </div>
+            <div class="tagline">Fast & Secure File Sharing</div>
+        </div>
+        <div class="content">
+            <div class="file-card">
+                <div class="file-top">
+                    <div class="file-icon-box">$file_icon</div>
+                    <div class="file-info">
+                        <div class="file-name">$file_name</div>
+                        <div class="file-meta">
+                            <span class="meta-chip size">📦 $file_size</span>
+                            <span class="meta-chip type">🎞️ $file_type</span>
+                            <span class="meta-chip downloads">📥 $download_count</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-divider"></div>
+                <div class="file-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">$file_size</div>
+                        <div class="stat-label">Size</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$file_type</div>
+                        <div class="stat-label">Type</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">$download_count</div>
+                        <div class="stat-label">Downloads</div>
+                    </div>
+                </div>
+            </div>
+            <div class="countdown-section">
+                <div class="countdown-text" id="countdown">
+                    Starting download in <span id="timer">15</span> seconds...
+                </div>
+                <div class="progress-track">
+                    <div class="progress-bar" id="progress"></div>
+                </div>
+            </div>
+            <div class="btn-group">
+                <a href="$download_url" id="downloadBtn" class="btn btn-download disabled">
+                    ⏳ Please wait...
+                </a>
+                $watch_button
+            </div>
+            <div class="trust-row">
+                <span class="trust-badge"><span class="dot"></span> Secure</span>
+                <span class="trust-badge"><span class="dot"></span> Fast CDN</span>
+                <span class="trust-badge"><span class="dot"></span> Direct Link</span>
+            </div>
+            <!-- Native Banner Ad -->
+            <div style="margin-top: 8px;">
+                <script async="async" data-cfasync="false" src="https://pl29132271.profitablecpmratenetwork.com/b5ae8d1752449b50291c54b76c329274/invoke.js"></script>
+                <div id="container-b5ae8d1752449b50291c54b76c329274"></div>
+            </div>
+        </div>
+        <div class="footer-section">
+            <div class="footer-text">
+                Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
+            </div>
+        </div>
+    </div>
+    <!-- Social Bar Ad -->
+    <script src="https://pl29132270.profitablecpmratenetwork.com/f3/b6/cf/f3b6cff595821203898a30c16f36762d.js"></script>
+    <script>
+        let seconds = 15;
+        const timer = document.getElementById('timer');
+        const btn = document.getElementById('downloadBtn');
+        const progress = document.getElementById('progress');
+        const countdown = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            seconds--;
+            timer.textContent = seconds;
+            progress.style.width = ((15 - seconds) / 15 * 100) + '%';
+            if (seconds <= 0) {
+                clearInterval(interval);
+                countdown.innerHTML = '✅ Your file is ready!';
+                btn.classList.remove('disabled');
+                btn.classList.add('ready');
+                btn.innerHTML = '📥 Download Now';
+                btn.style.pointerEvents = 'auto';
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = btn.href;
+                });
+                progress.style.width = '100%';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
