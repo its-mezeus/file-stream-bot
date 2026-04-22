@@ -27,3 +27,4 @@ Thumbs.db
 stream-bot-public.py.backup
 stream-bot-public.py.backup2
 templates/
+*.backup*
