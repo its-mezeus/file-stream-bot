@@ -72,7 +72,6 @@ DOWNLOAD_DIR.mkdir(exist_ok=True)
 
 # File mapping: hash -> {file_id, name, size, chat_id, message_id}
 file_map = {}
-user_cooldowns = {}  # user_id -> last file timestamp
 
 # Bots
 bot = Client("streambot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
@@ -619,20 +618,6 @@ async def broadcast_message(client, message):
         await message.reply(f"❌ <b>Error:</b> {str(e)}", parse_mode=enums.ParseMode.HTML)
 
 
-@bot.on_message(filters.command("restart") & filters.user(ADMIN_IDS))
-async def restart_bot(client, message):
-    """Restart the bot - Admin only"""
-    await message.reply("🔄 <b>Restarting bot...</b>\n\n⏳ Please wait a few seconds.", parse_mode=enums.ParseMode.HTML)
-    import sys, signal
-    # Stop the web server first so port 8888 is freed
-    try:
-        await client.stop()
-    except:
-        pass
-    # Small delay to let port close
-    await asyncio.sleep(2)
-    os.execv(sys.executable, [sys.executable] + sys.argv)
-
 @bot.on_message(filters.command("off") & filters.user(ADMIN_IDS))
 async def bot_off(client, message):
     """Temporarily disable bot - Admin only"""
@@ -993,7 +978,6 @@ Send me any file and get instant download link!
 <code>/off</code> - Pause bot
 <code>/off 30</code> - Pause for 30 minutes
 <code>/on</code> - Resume bot
-<code>/restart</code> - Restart bot
 
 ━━━━━━━━━━━━
 ⚡ <i>Send commands in chat</i>"""
@@ -1090,47 +1074,10 @@ Just send and get link!
         )
 
 
-    # Revoke link callback
-    if query.data.startswith("revoke_"):
-        file_hash = query.data[7:]
-        if file_hash in file_map:
-            name = file_map[file_hash].get('name', 'Unknown')
-            del file_map[file_hash]
-            # Also delete from DB
-            if USE_DATABASE:
-                try:
-                    db.files.delete_one({'file_hash': file_hash})
-                except:
-                    pass
-            await query.message.edit(
-                f"🗑️ <b>Link Revoked!</b>\n\n"
-                f"📄 <b>{name}</b>\n\n"
-                f"❌ Download link has been permanently deleted.\n\n"
-                f"━━━━━━━━━━━━\n"
-                f"⚡ <i>By Zeus</i>",
-                parse_mode=enums.ParseMode.HTML
-            )
-            await query.answer("✅ Link revoked!", show_alert=True)
-        else:
-            await query.answer("❌ Link already revoked or not found!", show_alert=True)
-        return
-
-
 @bot.on_message(filters.document | filters.video | filters.audio | filters.photo)
 async def handle_file(client, message):
     """Handle files"""
     try:
-        # Cooldown check (15s between files, admins bypass)
-        user_id = message.from_user.id
-        if user_id not in ADMIN_IDS:
-            import time as _time
-            now = _time.time()
-            last = user_cooldowns.get(user_id, 0)
-            remaining = 15 - (now - last)
-            if remaining > 0:
-                await message.reply(f"⏳ <b>Please wait {int(remaining)}s</b> before sending the next file.", parse_mode=enums.ParseMode.HTML)
-                return
-        
         # Check maintenance mode (admins bypass)
         if is_maintenance_active() and message.from_user.id not in ADMIN_IDS:
             await message.reply(get_maintenance_message(), parse_mode=enums.ParseMode.HTML)
@@ -1258,10 +1205,6 @@ Click the button(s) below to join:
             'duration': duration
         }
         
-        # Set cooldown
-        import time as _time
-        user_cooldowns[message.from_user.id] = _time.time()
-        
         # Size display
         if size >= 1024 * 1024:
             size_display = f"{size / (1024 * 1024):.2f} MB"
@@ -1284,14 +1227,11 @@ Click the button(s) below to join:
         watch_link = dl_link.replace('/download/', '/watch/')
         if name.lower().endswith(video_exts):
             kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("📥 Download", url=dl_link), InlineKeyboardButton("▶️ Watch Online", url=watch_link)],
-                [InlineKeyboardButton("🗑️ Revoke Link", callback_data=f"revoke_{file_hash}")]
+                [InlineKeyboardButton("📥 Download", url=dl_link)],
+                [InlineKeyboardButton("▶️ Watch Online", url=watch_link)]
             ])
         else:
-            kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("📥 Download", url=dl_link)],
-                [InlineKeyboardButton("🗑️ Revoke Link", callback_data=f"revoke_{file_hash}")]
-            ])
+            kb = InlineKeyboardMarkup([[InlineKeyboardButton("📥 Download", url=dl_link)]])
         
         await msg.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
         print(f"✅ {name} ({size_display})")
@@ -1321,15 +1261,6 @@ def get_file_icon(filename):
         'srt': '💬', 'ass': '💬', 'sub': '💬',
     }
     return icons.get(ext, '📁')
-
-import string as _string
-
-def _load_template(name):
-    tpl_path = os.path.join(os.path.dirname(__file__), 'templates', name)
-    with open(tpl_path, 'r') as f:
-        return _string.Template(f.read())
-
-DOWNLOAD_TPL = _load_template('download.html')
 
 def get_file_type(filename):
     """Get file type label based on extension"""
@@ -1617,9 +1548,9 @@ async def download_page(req):
     # Check if file is a video for watch button
     video_exts = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.flv', '.wmv', '.m4v', '.3gp')
     is_video = name.lower().endswith(video_exts)
-    watch_button = f'<a href="/watch/{file_hash}" class="btn btn-watch">▶️ Watch Online</a>' if is_video else ''
+    watch_button = f'<a href="/watch/{file_hash}" class="watch-btn">▶️ WATCH ONLINE</a>' if is_video else ''
     
-    html = DOWNLOAD_TPL.safe_substitute(
+    html = DOWNLOAD_PAGE_TEMPLATE.format(
         file_icon=get_file_icon(name),
         file_name=name,
         file_size=size_display,
@@ -1891,10 +1822,6 @@ async def watch_page(req):
             <div class="btn-row">
                 <a href="/download/{file_hash}" class="dl-btn">📥 Download</a>
             </div>
-            <div class="btn-row" id="extPlayerRow">
-                <a id="mxBtn" class="dl-btn" style="background: linear-gradient(135deg, #ff6b35, #ff4500); color: #fff; flex: 1;" onclick="openMX(); return false;" href="#">📱 MX Player</a>
-                <a id="playitBtn" class="dl-btn" style="background: linear-gradient(135deg, #00c853, #009624); color: #fff; flex: 1;" onclick="openPlayit(); return false;" href="#">▶️ PLAYit</a>
-            </div>
             <div class="tip">
                 💡 <b>Tip:</b> All formats supported (MP4, MKV, AVI etc). If buffering, let it load for a few seconds.
             </div>
@@ -1914,37 +1841,6 @@ async def watch_page(req):
         const transcodeUrl = '/transcode/{file_hash}';
         const ext = '{ext}'.toLowerCase();
         const statusBar = document.getElementById('status-bar');
-        const fullStreamUrl = window.location.origin + '/stream/{file_hash}?play=1';
-        const videoTitle = '{name}';
-        
-        function openMX() {{
-            // MX Player Android intent with S.browser_fallback_url
-            const intentUrl = 'intent:' + fullStreamUrl + '#Intent;package=com.mxtech.videoplayer.ad;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad') + ';end';
-            
-            // Also try MX Player Pro
-            const intentUrlPro = 'intent:' + fullStreamUrl + '#Intent;package=com.mxtech.videoplayer.pro;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad') + ';end';
-            
-            // Create hidden iframe to trigger intent (more reliable than window.location)
-            var iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = intentUrl;
-            document.body.appendChild(iframe);
-            
-            // Cleanup after 3s
-            setTimeout(function() {{ document.body.removeChild(iframe); }}, 3000);
-        }}
-        
-        function openPlayit() {{
-            // PLAYit Android intent
-            const intentUrl = 'intent:' + fullStreamUrl + '#Intent;package=com.playit.videoplayer;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.playit.videoplayer') + ';end';
-            
-            var iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = intentUrl;
-            document.body.appendChild(iframe);
-            
-            setTimeout(function() {{ document.body.removeChild(iframe); }}, 3000);
-        }}
         
         function showStatus(msg) {{
             statusBar.style.display = 'block';

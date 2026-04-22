@@ -72,7 +72,6 @@ DOWNLOAD_DIR.mkdir(exist_ok=True)
 
 # File mapping: hash -> {file_id, name, size, chat_id, message_id}
 file_map = {}
-user_cooldowns = {}  # user_id -> last file timestamp
 
 # Bots
 bot = Client("streambot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
@@ -1120,17 +1119,6 @@ Just send and get link!
 async def handle_file(client, message):
     """Handle files"""
     try:
-        # Cooldown check (15s between files, admins bypass)
-        user_id = message.from_user.id
-        if user_id not in ADMIN_IDS:
-            import time as _time
-            now = _time.time()
-            last = user_cooldowns.get(user_id, 0)
-            remaining = 15 - (now - last)
-            if remaining > 0:
-                await message.reply(f"⏳ <b>Please wait {int(remaining)}s</b> before sending the next file.", parse_mode=enums.ParseMode.HTML)
-                return
-        
         # Check maintenance mode (admins bypass)
         if is_maintenance_active() and message.from_user.id not in ADMIN_IDS:
             await message.reply(get_maintenance_message(), parse_mode=enums.ParseMode.HTML)
@@ -1257,10 +1245,6 @@ Click the button(s) below to join:
             'size': size,
             'duration': duration
         }
-        
-        # Set cooldown
-        import time as _time
-        user_cooldowns[message.from_user.id] = _time.time()
         
         # Size display
         if size >= 1024 * 1024:
@@ -1891,10 +1875,6 @@ async def watch_page(req):
             <div class="btn-row">
                 <a href="/download/{file_hash}" class="dl-btn">📥 Download</a>
             </div>
-            <div class="btn-row" id="extPlayerRow">
-                <a id="mxBtn" class="dl-btn" style="background: linear-gradient(135deg, #ff6b35, #ff4500); color: #fff; flex: 1;" onclick="openMX(); return false;" href="#">📱 MX Player</a>
-                <a id="playitBtn" class="dl-btn" style="background: linear-gradient(135deg, #00c853, #009624); color: #fff; flex: 1;" onclick="openPlayit(); return false;" href="#">▶️ PLAYit</a>
-            </div>
             <div class="tip">
                 💡 <b>Tip:</b> All formats supported (MP4, MKV, AVI etc). If buffering, let it load for a few seconds.
             </div>
@@ -1914,37 +1894,6 @@ async def watch_page(req):
         const transcodeUrl = '/transcode/{file_hash}';
         const ext = '{ext}'.toLowerCase();
         const statusBar = document.getElementById('status-bar');
-        const fullStreamUrl = window.location.origin + '/stream/{file_hash}?play=1';
-        const videoTitle = '{name}';
-        
-        function openMX() {{
-            // MX Player Android intent with S.browser_fallback_url
-            const intentUrl = 'intent:' + fullStreamUrl + '#Intent;package=com.mxtech.videoplayer.ad;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad') + ';end';
-            
-            // Also try MX Player Pro
-            const intentUrlPro = 'intent:' + fullStreamUrl + '#Intent;package=com.mxtech.videoplayer.pro;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.mxtech.videoplayer.ad') + ';end';
-            
-            // Create hidden iframe to trigger intent (more reliable than window.location)
-            var iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = intentUrl;
-            document.body.appendChild(iframe);
-            
-            // Cleanup after 3s
-            setTimeout(function() {{ document.body.removeChild(iframe); }}, 3000);
-        }}
-        
-        function openPlayit() {{
-            // PLAYit Android intent
-            const intentUrl = 'intent:' + fullStreamUrl + '#Intent;package=com.playit.videoplayer;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.playit.videoplayer') + ';end';
-            
-            var iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = intentUrl;
-            document.body.appendChild(iframe);
-            
-            setTimeout(function() {{ document.body.removeChild(iframe); }}, 3000);
-        }}
         
         function showStatus(msg) {{
             statusBar.style.display = 'block';
