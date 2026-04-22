@@ -1250,15 +1250,12 @@ Click the button(s) below to join:
         )
         
         # Store
-        import time as _time
         file_map[file_hash] = {
             'chat_id': LOG_CHANNEL,
             'message_id': fwd.id,
             'name': name,
             'size': size,
-            'duration': duration,
-            'created_at': _time.time(),
-            'user_id': message.from_user.id
+            'duration': duration
         }
         
         # Set cooldown
@@ -1279,7 +1276,6 @@ Click the button(s) below to join:
 🔗 <b>Download Link:</b>
 <code>{dl_link}</code>
 
-⏰ <i>Link expires in 24 hours</i>
 ━━━━━━━━━━━━
 ⚡ <i>By Zeus</i>"""
         
@@ -2198,40 +2194,6 @@ async def main():
 ⚡ <i>File To Link Bot is Online!</i>"""
     
     await bot.send_message(LOG_CHANNEL, start_msg, parse_mode=enums.ParseMode.HTML)
-    
-    # Start link expiry cleanup task (runs every 5 minutes)
-    async def cleanup_expired_links():
-        import time as _time
-        while True:
-            await asyncio.sleep(300)  # Check every 5 minutes
-            now = _time.time()
-            expired = []
-            for fhash, info in list(file_map.items()):
-                created = info.get('created_at', 0)
-                if created > 0 and (now - created) >= 86400:  # 24 hours
-                    expired.append(fhash)
-            
-            for fhash in expired:
-                info = file_map.pop(fhash, None)
-                if info:
-                    name = info.get('name', 'Unknown')
-                    uid = info.get('user_id')
-                    print(f"🗑️ Expired: {name}")
-                    # Notify user
-                    if uid:
-                        try:
-                            await bot.send_message(
-                                uid,
-                                f"⏰ <b>Link Expired!</b>\n\n"
-                                f"📄 <b>{name}</b>\n\n"
-                                f"❌ Your download link has expired after 24 hours.\n"
-                                f"Send the file again to generate a new link.",
-                                parse_mode=enums.ParseMode.HTML
-                            )
-                        except:
-                            pass
-    
-    asyncio.get_event_loop().create_task(cleanup_expired_links())
     
     from pyrogram import idle
     await idle()
