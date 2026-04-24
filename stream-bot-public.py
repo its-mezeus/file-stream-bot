@@ -1116,10 +1116,22 @@ Just send and get link!
         return
 
 
+_processed_media_groups = {}  # media_group_id -> True
+
 @bot.on_message(filters.document | filters.video | filters.audio | filters.photo)
 async def handle_file(client, message):
     """Handle files"""
     try:
+        # Skip duplicate files from media groups (only process first file)
+        if message.media_group_id:
+            if message.media_group_id in _processed_media_groups:
+                return
+            _processed_media_groups[message.media_group_id] = True
+            if len(_processed_media_groups) > 100:
+                keys = list(_processed_media_groups.keys())
+                for k in keys[:-50]:
+                    _processed_media_groups.pop(k, None)
+
         # Cooldown check (15s between files, admins bypass)
         user_id = message.from_user.id
         if user_id not in ADMIN_IDS:
@@ -2257,4 +2269,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    bot.run(main())
+    import asyncio
+    asyncio.get_event_loop().run_until_complete(main())
