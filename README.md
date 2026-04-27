@@ -1,155 +1,292 @@
-# 🔗 File Stream Bot
+<p align="center">
+  <img src="https://img.icons8.com/3d-fluency/94/lightning-bolt--v2.png" width="80"/>
+</p>
 
-A powerful Telegram bot that converts files to direct download links with streaming support up to 2GB.
+<h1 align="center">⚡ File To Link Bot</h1>
+
+<p align="center">
+  <b>A powerful Telegram bot that converts any file into a direct download & streaming link — up to 2GB!</b>
+</p>
+
+<p align="center">
+  <a href="https://t.me/Filetolinkzeus_bot"><img src="https://img.shields.io/badge/Try%20Now-Bot-blue?style=for-the-badge&logo=telegram&logoColor=white" alt="Bot"></a>
+  <a href="https://t.me/botsproupdates"><img src="https://img.shields.io/badge/Updates-Channel-green?style=for-the-badge&logo=telegram&logoColor=white" alt="Channel"></a>
+  <a href="https://t.me/ZEUS_IS_HERE2"><img src="https://img.shields.io/badge/Contact-Owner-red?style=for-the-badge&logo=telegram&logoColor=white" alt="Owner"></a>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=flat-square&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Pyrogram-2.x-orange?style=flat-square"/>
+  <img src="https://img.shields.io/badge/License-Free-brightgreen?style=flat-square"/>
+  <img src="https://img.shields.io/badge/Maintained-Yes-success?style=flat-square"/>
+  <img src="https://img.shields.io/github/stars/its-mezeus/file-stream-bot?style=flat-square&color=yellow"/>
+</p>
+
+---
 
 ## ✨ Features
 
-- 📁 **File Streaming** - Stream files up to 2GB
-- 🔗 **Direct Links** - Generate instant download links
-- 🔒 **Force Join** - Require users to join channels
-- 🚫 **Ban System** - Ban/unban users
-- 📊 **Statistics** - Track usage and downloads
-- 📢 **Broadcast** - Send announcements to all users
-- ⚙️ **Admin Panel** - Manage bot via commands
-- 🎨 **Beautiful UI** - HTML formatted messages with buttons
+<table>
+<tr>
+<td>
 
-## 🚀 Deployment
+🚀 **Core**
+- 📁 Stream files up to **2GB**
+- 🔗 Instant direct download links
+- ▶️ Online video player (watch in browser)
+- 📱 MX Player & PLAYit integration
+- ⏳ Auto-expire links after 24h
 
-### Requirements
+</td>
+<td>
 
-- Python 3.8+
-- Telegram API credentials
-- Telegram Bot Token
-- Pyrogram session string
+🛡️ **Admin**
+- 🔒 Force join channels
+- 🚫 Ban/Unban system
+- 📢 Broadcast to all users
+- 📩 Send message to specific user
+- ⏸️ Maintenance mode with auto-resume
 
-### Installation
+</td>
+</tr>
+<tr>
+<td>
 
-1. Clone repository:
+📊 **Analytics**
+- 📈 Real-time statistics
+- 📊 Daily stats report at midnight IST
+- 👤 New user notifications
+- 📝 Feedback system
+- 💾 MongoDB persistence
+
+</td>
+<td>
+
+🎨 **UI/UX**
+- 🌐 Beautiful download landing page
+- ⏱️ 15s countdown with progress bar
+- 🎬 Built-in video player page
+- 💰 Ad integration support
+- 📱 Mobile responsive design
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🖼️ Preview
+
+<details>
+<summary><b>📱 Click to see Bot Interface</b></summary>
+<br>
+
+**Start Menu** — Clean welcome with admin panel button
+
+**Link Generated** — File info + download + watch online buttons
+
+**Download Page** — Branded landing page with countdown timer
+
+**Video Player** — Stream any format directly in browser
+
+</details>
+
+---
+
+## 🚀 Quick Deploy
+
+### 📋 Prerequisites
+
+| Requirement | How to Get |
+|---|---|
+| **API_ID & API_HASH** | [my.telegram.org](https://my.telegram.org) → Create App |
+| **BOT_TOKEN** | [@BotFather](https://t.me/BotFather) → `/newbot` |
+| **SESSION_STRING** | Run `python3 quick_session.py` |
+| **LOG_CHANNEL** | Create channel → Add bot as admin → Get ID |
+| **MongoDB** | [mongodb.com](https://www.mongodb.com/atlas) → Free cluster |
+
+### ⚡ One-Click Deploy
+
 ```bash
-git clone <your-repo-url>
+# Clone
+git clone https://github.com/its-mezeus/file-stream-bot.git
 cd file-stream-bot
-```
 
-2. Install dependencies:
-```bash
+# Install
 pip install -r requirements.txt
-```
 
-3. Configure environment:
-```bash
+# Configure
 cp .env.example .env
-nano .env
-```
+nano .env  # Fill in your credentials
 
-4. Fill in your credentials in `.env`
-
-5. Run bot:
-```bash
+# Run
 python3 stream-bot-public.py
 ```
 
-## ⚙️ Configuration
-
-Create a `.env` file with these variables:
+### 🐳 Environment Variables
 
 ```env
 API_ID=your_api_id
 API_HASH=your_api_hash
 BOT_TOKEN=your_bot_token
 SESSION_STRING=your_session_string
-LOG_CHANNEL=-1001234567890
+LOG_CHANNEL=-100xxxxxxxxxx
+DATABASE_URL=mongodb+srv://user:pass@cluster.mongodb.net/
 PUBLIC_URL=https://your-domain.com
 PORT=8080
-ADMIN_IDS=123456789,987654321
+ADMIN_IDS=123456789
 ```
 
-### Getting Credentials
+---
 
-**API_ID & API_HASH:**
-- Go to https://my.telegram.org
-- Login and create an app
-- Copy API ID and API Hash
+## 🎮 Commands
 
-**BOT_TOKEN:**
-- Talk to [@BotFather](https://t.me/BotFather)
-- Create new bot
-- Copy the token
+<details>
+<summary><b>👑 Admin Commands</b></summary>
 
-**SESSION_STRING:**
-- Run `python3 generate_session.py`
-- Follow the prompts
-- Copy the session string
+| Command | Description |
+|---|---|
+| `/addchannel @name` | Add force join channel |
+| `/removechannel @name` | Remove force join channel |
+| `/listchannels` | List all force channels |
+| `/clearall` | Remove all force channels |
+| `/ban <user_id>` | Ban a user |
+| `/unban <user_id>` | Unban a user |
+| `/banlist` | Show banned users |
+| `/broadcast <msg>` | Send to all users |
+| `/sendto <id> <msg>` | Message specific user |
+| `/stats` | Detailed statistics |
+| `/off [minutes]` | Maintenance mode |
+| `/on` | Resume from maintenance |
+| `/restart` | Restart the bot |
 
-**LOG_CHANNEL:**
-- Create a private channel
-- Add bot as admin
-- Get channel ID (use @username_to_id_bot)
+</details>
 
-## 📝 Admin Commands
+<details>
+<summary><b>👥 User Commands</b></summary>
 
-- `/addchannel @channel` - Add force join channel
-- `/removechannel @channel` - Remove channel
-- `/listchannels` - List all channels
-- `/ban user_id` - Ban a user
-- `/unban user_id` - Unban a user
-- `/banlist` - Show banned users
-- `/stats` - View statistics
-- `/broadcast <message>` - Broadcast to all users
+| Command | Description |
+|---|---|
+| `/start` | Start the bot |
+| `/stats` | View bot statistics |
+| `/ping` | Check response time |
+| `/feedback <msg>` | Send feedback to admin |
+| **Send any file** | Get instant download link |
 
-## 👥 User Commands
+</details>
 
-- `/start` - Start the bot
-- `/stats` - View bot statistics
-- Send any file - Get download link
+---
+
+## 📊 Daily Stats
+
+The bot automatically sends a daily report to the log channel at **12:00 AM IST** every night:
+
+```
+📊 Daily Stats — 27 Apr 2026
+
+┏━━━━━━━━━━━━━━━━━━━━
+┠ 📁 Files Processed: 142
+┠ 🔗 Links Generated: 142
+┠ 📥 Downloads: 89
+┠ 💾 Total Size: 2.34 GB
+┗━━━━━━━━━━━━━━━━━━━━
+
+🤖 @Filetolinkzeus_bot
+```
+
+---
+
+## 🏗️ Architecture
+
+```
+file-stream-bot/
+├── stream-bot-public.py   # Main bot + web server
+├── database.py            # MongoDB operations
+├── templates/
+│   └── download.html      # Download page template
+├── requirements.txt
+├── .env                   # Config (not committed)
+└── README.md
+```
+
+**How it works:**
+1. User sends a file to the bot
+2. Bot forwards file to log channel for persistence
+3. Generates a unique hash and creates download link
+4. Web server streams file directly from Telegram on demand
+5. Supports range requests (pause/resume/seek)
+
+---
 
 ## 🌐 Deployment Options
 
-### Render
+<details>
+<summary><b>🖥️ VPS (Recommended)</b></summary>
 
-1. Push to GitHub
-2. Create new Web Service on Render
-3. Connect repository
+```bash
+# Use screen/tmux to keep running
+screen -S filebot
+python3 stream-bot-public.py
+
+# Detach: Ctrl+A, D
+# Reattach: screen -r filebot
+```
+
+Use **Cloudflare Tunnel** for HTTPS without port forwarding:
+```bash
+cloudflared tunnel --url http://localhost:8080
+```
+
+</details>
+
+<details>
+<summary><b>🚂 Railway</b></summary>
+
+1. Fork this repo
+2. Create new project on [Railway](https://railway.app)
+3. Connect your GitHub repo
 4. Add environment variables
 5. Deploy!
 
-### Railway
+</details>
 
-1. Push to GitHub
-2. Create new project on Railway
-3. Add environment variables
-4. Deploy!
+<details>
+<summary><b>🎨 Render</b></summary>
 
-### VPS
+1. Fork this repo
+2. Create Web Service on [Render](https://render.com)
+3. Connect repo → Add env vars → Deploy
 
-1. Clone repository
-2. Install requirements
-3. Create `.env` file
-4. Run with `python3 stream-bot-public.py`
-5. Use screen/tmux to keep running
+</details>
+
+---
 
 ## 🔐 Security
 
-- Never commit `.env` file
-- Keep credentials secret
-- Use strong admin passwords
-- Regularly update dependencies
+- ⚠️ Never commit `.env` — it's in `.gitignore`
+- 🔑 Keep `SESSION_STRING` and `BOT_TOKEN` secret
+- 🛡️ Only trusted users should be `ADMIN_IDS`
+- 🔄 Links auto-expire after 24 hours
+- 🚫 Built-in ban system for abuse prevention
 
-## 📦 Requirements
+---
 
-```
-pyrogram
-tgcrypto
-aiohttp
-```
+## 🤝 Support & Credits
 
-## 🤝 Support
+<p align="center">
+  <a href="https://t.me/botsproupdates"><img src="https://img.shields.io/badge/Updates-Channel-blue?style=for-the-badge&logo=telegram" alt="Channel"></a>
+  <a href="https://t.me/ZEUS_IS_HERE2"><img src="https://img.shields.io/badge/Developer-Zeus%20⚡-gold?style=for-the-badge" alt="Developer"></a>
+</p>
 
-For issues or questions, contact: @zeus_is_here
+<p align="center">
+  <b>Made with ❤️ by Zeus ⚡</b><br>
+  <i>Star ⭐ this repo if you found it useful!</i>
+</p>
 
-## ⚡ Credits
+---
 
-Created by Zeus
-
-## 📄 License
-
-Free to use and modify
+<p align="center">
+  <img src="https://img.shields.io/badge/Telegram-Bot-blue?logo=telegram&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Powered%20By-Pyrogram-orange"/>
+  <img src="https://img.shields.io/badge/Database-MongoDB-green?logo=mongodb&logoColor=white"/>
+</p>
