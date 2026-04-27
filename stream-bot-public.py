@@ -65,6 +65,9 @@ stats = {
     'total_files': 0,
     'total_downloads': 0,
     'files_today': 0,
+    'links_today': 0,
+    'downloads_today': 0,
+    'bytes_today': 0,
     'start_date': datetime.now()
 }
 
@@ -1223,6 +1226,8 @@ Click the button(s) below to join:
         # Update stats
         stats['total_files'] += 1
         stats['files_today'] += 1
+        stats['links_today'] += 1
+        stats['bytes_today'] += size
         
         # Generate hash
         import hashlib
@@ -2129,6 +2134,7 @@ async def stream_file(req):
         # Track download (only for full downloads)
         if start == 0:
             stats['total_downloads'] += 1
+            stats['downloads_today'] += 1
             info['downloads'] = info.get('downloads', 0) + 1
         
         return response
@@ -2244,7 +2250,61 @@ async def main():
                             pass
     
     asyncio.get_event_loop().create_task(cleanup_expired_links())
-    
+
+    # Daily stats task — sends report at 12:00 AM IST (18:30 UTC) and resets counters
+    async def daily_stats_report():
+        from datetime import timedelta
+        IST = timedelta(hours=5, minutes=30)
+        while True:
+            # Calculate seconds until next 12:00 AM IST (18:30 UTC)
+            now_utc = datetime.utcnow()
+            now_ist = now_utc + IST
+            # Next midnight IST
+            tomorrow_ist = (now_ist + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            next_midnight_utc = tomorrow_ist - IST
+            wait_seconds = (next_midnight_utc - now_utc).total_seconds()
+            if wait_seconds <= 0:
+                wait_seconds += 86400  # fallback: wait a full day
+            print(f"📊 Daily stats scheduled in {wait_seconds/3600:.1f}h")
+            await asyncio.sleep(wait_seconds)
+
+            # Format bytes
+            b = stats['bytes_today']
+            if b >= 1024 * 1024 * 1024:
+                size_str = f"{b / (1024**3):.2f} GB"
+            elif b >= 1024 * 1024:
+                size_str = f"{b / (1024**2):.2f} MB"
+            elif b >= 1024:
+                size_str = f"{b / 1024:.2f} KB"
+            else:
+                size_str = f"{b} B"
+
+            today_str = (datetime.utcnow() + IST - timedelta(seconds=1)).strftime('%d %b %Y')
+            report = f"""📊 <b>Daily Stats — {today_str}</b>
+
+┏━━━━━━━━━━━━━━━━━━━━
+┠ 📁 <b>Files Processed:</b> {stats['files_today']}
+┠ 🔗 <b>Links Generated:</b> {stats['links_today']}
+┠ 📥 <b>Downloads:</b> {stats['downloads_today']}
+┠ 💾 <b>Total Size:</b> {size_str}
+┗━━━━━━━━━━━━━━━━━━━━
+
+🤖 @{bot_me.username}"""
+
+            try:
+                await bot.send_message(LOG_CHANNEL, report, parse_mode=enums.ParseMode.HTML)
+                print(f"📊 Daily stats sent for {today_str}")
+            except Exception as e:
+                print(f"❌ Failed to send daily stats: {e}")
+
+            # Reset daily counters
+            stats['files_today'] = 0
+            stats['links_today'] = 0
+            stats['downloads_today'] = 0
+            stats['bytes_today'] = 0
+
+    asyncio.get_event_loop().create_task(daily_stats_report())
+
     from pyrogram import idle
     await idle()
     
