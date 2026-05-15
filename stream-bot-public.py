@@ -1059,7 +1059,9 @@ Thank you for considering a donation! ❤️
 Your support helps keep this bot running 24/7 and motivates me to add new features ⚡
 
 💰 <b>How to donate:</b>
-Send any amount to @ZEUS_IS_HERE2
+
+📲 <b>UPI:</b> <code>muhammed50@fam</code>
+💬 <b>Telegram:</b> @ZEUS_IS_HERE2
 
 Every contribution, big or small, means the world to me! 🙏
 
