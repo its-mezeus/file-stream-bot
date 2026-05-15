@@ -877,8 +877,11 @@ Send me any file and get instant download link!
     if user_id in ADMIN_IDS:
         kb = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("👤 Owner", url="https://t.me/zeus_is_here"),
+                InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"),
                 InlineKeyboardButton("❓ Help", callback_data="help")
+            ],
+            [
+                InlineKeyboardButton("☕ Donate", callback_data="donate")
             ],
             [
                 InlineKeyboardButton("⚙️ Admin Panel", callback_data="admin_panel")
@@ -887,8 +890,11 @@ Send me any file and get instant download link!
     else:
         kb = InlineKeyboardMarkup([
             [
-                InlineKeyboardButton("👤 Owner", url="https://t.me/zeus_is_here"),
+                InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"),
                 InlineKeyboardButton("❓ Help", callback_data="help")
+            ],
+            [
+                InlineKeyboardButton("☕ Donate", callback_data="donate")
             ]
         ])
     
@@ -932,20 +938,14 @@ Send me any file and get instant download link!
         # Show admin button if user is admin
         if user_id in ADMIN_IDS:
             kb = InlineKeyboardMarkup([
-                [
-                    InlineKeyboardButton("👤 Owner", url="https://t.me/zeus_is_here"),
-                    InlineKeyboardButton("❓ Help", callback_data="help")
-                ],
-                [
-                    InlineKeyboardButton("⚙️ Admin Panel", callback_data="admin_panel")
-                ]
+                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
+                [InlineKeyboardButton("☕ Donate", callback_data="donate")],
+                [InlineKeyboardButton("⚙️ Admin Panel", callback_data="admin_panel")]
             ])
         else:
             kb = InlineKeyboardMarkup([
-                [
-                    InlineKeyboardButton("👤 Owner", url="https://t.me/zeus_is_here"),
-                    InlineKeyboardButton("❓ Help", callback_data="help")
-                ]
+                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
+                [InlineKeyboardButton("☕ Donate", callback_data="donate")]
             ])
         
         await query.message.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
@@ -1050,6 +1050,59 @@ Send me any file and get instant download link!
         await query.message.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
         return
     
+    if query.data == "donate":
+        await query.message.edit(
+            """☕ <b>Support Zeus!</b>
+
+Thank you for considering a donation! ❤️
+
+Your support helps keep this bot running 24/7 and motivates me to add new features ⚡
+
+💰 <b>How to donate:</b>
+Send any amount to @ZEUS_IS_HERE2
+
+Every contribution, big or small, means the world to me! 🙏
+
+━━━━━━━━━━━━
+⚡ <i>By Zeus</i>""",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("💬 Contact @ZEUS_IS_HERE2", url="https://t.me/ZEUS_IS_HERE2")],
+                [InlineKeyboardButton("🔙 Back", callback_data="back_to_start")]
+            ]),
+            parse_mode=enums.ParseMode.HTML
+        )
+        return
+
+    if query.data == "back_to_start":
+        name = query.from_user.first_name
+        user_id = query.from_user.id
+        text = f"""🌟 <b>Welcome To File To Link Bot</b> 🌟
+
+Hey <a href="tg://user?id={user_id}">{name}</a>! 👋
+
+Send me any file and get instant download link!
+
+📎 <i>All file types supported</i>
+⚡ <i>Instant link generation</i>
+🌐 <i>Direct browser downloads</i>
+💪 <i>Fast and Furious</i>
+
+━━━━━━━━━━━━
+⚡ <i>By Zeus</i>"""
+        if user_id in ADMIN_IDS:
+            kb = InlineKeyboardMarkup([
+                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
+                [InlineKeyboardButton("☕ Donate", callback_data="donate")],
+                [InlineKeyboardButton("⚙️ Admin Panel", callback_data="admin_panel")]
+            ])
+        else:
+            kb = InlineKeyboardMarkup([
+                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
+                [InlineKeyboardButton("☕ Donate", callback_data="donate")]
+            ])
+        await query.message.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
+        return
+
     if query.data == "help":
         await query.message.edit(
             """🆘 <b>HOW TO USE</b>
@@ -1513,6 +1566,7 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
             <span class="stat-badge">⚡ Fast</span>
             <span class="stat-badge">🌐 Direct</span>
         </div>
+        <a href="https://t.me/ZEUS_IS_HERE2" target="_blank" style="display:block;text-align:center;margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,154,0,0.1);border:1px solid rgba(255,154,0,0.2);color:#ff9a00;text-decoration:none;font-weight:600;font-size:13px;">☕ Buy Me a Coffee</a>
         <div class="footer">
             Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
         </div>
