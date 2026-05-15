@@ -1513,17 +1513,10 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
             <span class="stat-badge">⚡ Fast</span>
             <span class="stat-badge">🌐 Direct</span>
         </div>
-        <!-- Native Banner Ad -->
-        <div style="margin-top: 20px;">
-            <script async="async" data-cfasync="false" src="https://pl29132271.profitablecpmratenetwork.com/b5ae8d1752449b50291c54b76c329274/invoke.js"></script>
-            <div id="container-b5ae8d1752449b50291c54b76c329274"></div>
-        </div>
         <div class="footer">
             Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
         </div>
     </div>
-    <!-- Social Bar Ad -->
-    <script src="https://pl29132270.profitablecpmratenetwork.com/f3/b6/cf/f3b6cff595821203898a30c16f36762d.js"></script>
     <script>
         let seconds = 15;
         const timer = document.getElementById('timer');
@@ -1922,11 +1915,6 @@ async def watch_page(req):
             <div class="tip" style="background: rgba(255, 80, 80, 0.1); border-color: rgba(255, 80, 80, 0.2);">
                 ⚠️ <b>Multi-Audio Notice:</b> If the movie has 2 or more audio languages, the browser will only play the default track. <b>Download the file</b> and use <b>VLC / MX Player</b> to switch between audio languages.
             </div>
-            <!-- Native Banner Ad -->
-            <div style="margin-top: 16px;">
-                <script async="async" data-cfasync="false" src="https://pl29132271.profitablecpmratenetwork.com/b5ae8d1752449b50291c54b76c329274/invoke.js"></script>
-                <div id="container-b5ae8d1752449b50291c54b76c329274"></div>
-            </div>
         </div>
     </div>
     <script>
@@ -2004,8 +1992,6 @@ async def watch_page(req):
             }}
         }}, 20000);
     </script>
-    <!-- Social Bar Ad -->
-    <script src="https://pl29132270.profitablecpmratenetwork.com/f3/b6/cf/f3b6cff595821203898a30c16f36762d.js"></script>
     <div class="footer">
         Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
     </div>
