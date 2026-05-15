@@ -1060,8 +1060,8 @@ Your support helps keep this bot running 24/7 and motivates me to add new featur
 
 💰 <b>How to donate:</b>
 
-📲 <b>UPI:</b> <code>muhammed50@fam</code>
-💬 <b>Telegram:</b> @ZEUS_IS_HERE2
+📲 <b>UPI (India):</b> <code>muhammed50@fam</code>
+🌍 <b>Not in India?</b> DM me @ZEUS_IS_HERE2
 
 Every contribution, big or small, means the world to me! 🙏
 
