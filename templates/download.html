@@ -234,14 +234,15 @@
 </head>
 <body>
     <div class="container">
-        <div class="header" style="position:relative;">
-            <a href="/" style="position:absolute;top:16px;left:16px;width:32px;height:32px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">🏠</a>
-            <div class="brand-row">
-                <div class="brand-icon">⚡</div>
-                <div class="brand-text">File To Link Bot</div>
-            </div>
-            <div class="tagline">Fast & Secure File Sharing</div>
-        </div>
+        <nav style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);">
+            <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+                <div style="width:36px;height:36px;background:linear-gradient(135deg,#ffd700,#ff9a00);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 10px rgba(255,215,0,0.2);">⚡</div>
+                <span style="color:#fff;font-size:16px;font-weight:700;letter-spacing:-0.3px;">File To Link</span>
+            </a>
+            <a href="/" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:10px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </a>
+        </nav>
         <div class="content">
             <div class="file-card">
                 <div class="file-top">

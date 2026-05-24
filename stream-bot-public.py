@@ -2139,8 +2139,16 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <div class="container" style="position:relative;">
-        <a href="/" style="position:absolute;top:14px;left:14px;width:32px;height:32px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">🏠</a>
+    <nav style="position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:999;">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <div style="width:34px;height:34px;background:linear-gradient(135deg,#ffd700,#ff9a00);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 10px rgba(255,215,0,0.2);">⚡</div>
+            <span style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.3px;">File To Link</span>
+        </a>
+        <a href="/" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:9px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+    </nav>
+    <div class="container" style="margin-top:70px;">
         <div class="logo">⚡</div>
         <div class="brand">File To Link Bot</div>
         <div class="tagline">Fast & Secure File Sharing</div>
@@ -2556,8 +2564,16 @@ async def watch_page(req):
     </style>
 </head>
 <body>
-    <a href="/" style="position:fixed;top:12px;left:12px;width:34px;height:34px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.12);border-radius:9px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:15px;z-index:999;backdrop-filter:blur(10px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">🏠</a>
-    <div class="player-container">
+    <nav style="position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:999;">
+        <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+            <div style="width:34px;height:34px;background:linear-gradient(135deg,#ffd700,#ff9a00);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 10px rgba(255,215,0,0.2);">⚡</div>
+            <span style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.3px;">File To Link</span>
+        </a>
+        <a href="/" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:9px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </a>
+    </nav>
+    <div class="player-container" style="margin-top:70px;">
         <div class="video-wrapper" id="videoWrapper">
             <video id="player" controls autoplay playsinline preload="auto"></video>
         </div>
