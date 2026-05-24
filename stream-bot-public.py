@@ -1624,16 +1624,29 @@ Click the button(s) below to join:
         # Check if video file — add Watch Online button
         video_exts = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.flv', '.wmv', '.m4v', '.3gp')
         watch_link = dl_link.replace('/download/', '/watch/')
+        is_admin = message.from_user.id in ADMIN_IDS
         if name.lower().endswith(video_exts):
-            kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("📥 Download", url=dl_link), InlineKeyboardButton("▶️ Watch Online", url=watch_link)],
-                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
-            ])
+            if is_admin:
+                kb = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("📥 Download", url=dl_link), InlineKeyboardButton("▶️ Watch Online", url=watch_link)],
+                    [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
+                ])
+            else:
+                kb = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("📥 Download", url=dl_link), InlineKeyboardButton("▶️ Watch Online", url=watch_link)],
+                    [InlineKeyboardButton("🗑️ Revoke Link", callback_data=f"revoke_{file_hash}")]
+                ])
         else:
-            kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("📥 Download", url=dl_link)],
-                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
-            ])
+            if is_admin:
+                kb = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("📥 Download", url=dl_link)],
+                    [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
+                ])
+            else:
+                kb = InlineKeyboardMarkup([
+                    [InlineKeyboardButton("📥 Download", url=dl_link)],
+                    [InlineKeyboardButton("🗑️ Revoke Link", callback_data=f"revoke_{file_hash}")]
+                ])
         
         await msg.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
         print(f"✅ {name} ({size_display})")
