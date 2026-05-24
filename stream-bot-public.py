@@ -1364,6 +1364,20 @@ Just send and get link!
                 parse_mode=enums.ParseMode.HTML
             )
             await query.answer("✅ Link revoked!", show_alert=True)
+            
+            # Log to channel
+            if LOG_CHANNEL:
+                user = query.from_user
+                log_text = (
+                    f"🗑️ <b>Link Revoked</b>\n\n"
+                    f"👤 <b>User:</b> <a href='tg://user?id={user.id}'>{user.first_name}</a> [<code>{user.id}</code>]\n"
+                    f"📄 <b>File:</b> {name}\n"
+                    f"🔗 <b>Hash:</b> <code>{file_hash}</code>"
+                )
+                try:
+                    await bot.send_message(LOG_CHANNEL, log_text, parse_mode=enums.ParseMode.HTML)
+                except:
+                    pass
         else:
             await query.answer("❌ Link already revoked or not found!", show_alert=True)
         return
