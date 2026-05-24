@@ -1295,6 +1295,10 @@ Just send and get link!
         new_expiry = EXPIRY_OPTIONS[option]
         file_map[file_hash]['expiry'] = new_expiry
         
+        # Sync to database
+        if USE_DATABASE and db:
+            db.update_file_expiry(file_hash, new_expiry)
+        
         if new_expiry == 0:
             display = "♾️ Permanent (never expire)"
         elif new_expiry >= 86400:
@@ -1582,6 +1586,10 @@ Click the button(s) below to join:
             'expiry': link_expiry['default']  # 0 = permanent
         }
         
+        # Save to database for persistence across restarts
+        if USE_DATABASE and db:
+            db.save_file(file_hash, file_map[file_hash])
+        
         # Set cooldown
         import time as _time
         user_cooldowns[message.from_user.id] = _time.time()
@@ -1840,7 +1848,7 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
         const interval = setInterval(() => {{
             seconds--;
             timer.textContent = seconds;
-            progress.style.width = ((15 - seconds) / 15 * 100) + '%';
+            progress.style.width = ((10 - seconds) / 10 * 100) + '%';
             if (seconds <= 0) {{
                 clearInterval(interval);
                 countdown.innerHTML = '✅ Ready to download!';
@@ -2439,6 +2447,12 @@ async def stream_file(req):
             stats['total_downloads'] += 1
             stats['downloads_today'] += 1
             info['downloads'] = info.get('downloads', 0) + 1
+            # Sync download count to DB
+            if USE_DATABASE and db:
+                try:
+                    db.update_file_downloads(file_hash, info['downloads'])
+                except:
+                    pass
         
         return response
         
@@ -2506,7 +2520,12 @@ async def main():
         
         db_stats = db.get_stats()
         stats['total_files'] = db_stats.get('total_files', 0)
+        
+        # Load file mappings — links survive restarts!
+        saved_files = db.get_all_files()
+        file_map.update(saved_files)
         print(f"✅ Loaded {len(all_users)} users, {stats['total_files']} files from DB")
+        print(f"✅ Restored {len(saved_files)} active file links from DB")
     
     await start_web()
     
@@ -2553,6 +2572,12 @@ async def main():
             
             for fhash in expired:
                 info = file_map.pop(fhash, None)
+                # Remove from database too
+                if USE_DATABASE and db:
+                    try:
+                        db.delete_file(fhash)
+                    except:
+                        pass
                 if info:
                     name = info.get('name', 'Unknown')
                     uid = info.get('user_id')

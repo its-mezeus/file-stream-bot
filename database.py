@@ -26,10 +26,14 @@ class StreamBotDB:
             # Collections
             self.users = self.db['users']
             self.force_channels = self.db['force_channels']
+            self.files = self.db['files']
             
             # Create indexes for better performance
             self.users.create_index("user_id", unique=True)
             self.force_channels.create_index("channel_id", unique=True)
+            self.files.create_index("file_hash", unique=True)
+            self.files.create_index("user_id")
+            self.files.create_index("created_at")
             
             logger.info("✅ MongoDB connected successfully!")
             
@@ -273,6 +277,85 @@ class StreamBotDB:
         except Exception as e:
             logger.error(f"Error getting top uploaders: {e}")
             return []
+    
+    # ==================== FILE MAP METHODS ====================
+    
+    def save_file(self, file_hash: str, file_data: dict):
+        """Save file mapping to database"""
+        try:
+            doc = {
+                'file_hash': file_hash,
+                'chat_id': file_data.get('chat_id'),
+                'message_id': file_data.get('message_id'),
+                'name': file_data.get('name'),
+                'size': file_data.get('size', 0),
+                'duration': file_data.get('duration', 0),
+                'created_at': file_data.get('created_at', 0),
+                'user_id': file_data.get('user_id'),
+                'expiry': file_data.get('expiry', 86400),
+                'downloads': file_data.get('downloads', 0)
+            }
+            self.files.update_one(
+                {'file_hash': file_hash},
+                {'$set': doc},
+                upsert=True
+            )
+            return True
+        except Exception as e:
+            logger.error(f"Error saving file {file_hash}: {e}")
+            return False
+    
+    def get_all_files(self) -> Dict[str, dict]:
+        """Load all file mappings from database — returns dict like file_map"""
+        try:
+            file_map = {}
+            for doc in self.files.find():
+                fhash = doc.get('file_hash')
+                if fhash:
+                    file_map[fhash] = {
+                        'chat_id': doc.get('chat_id'),
+                        'message_id': doc.get('message_id'),
+                        'name': doc.get('name'),
+                        'size': doc.get('size', 0),
+                        'duration': doc.get('duration', 0),
+                        'created_at': doc.get('created_at', 0),
+                        'user_id': doc.get('user_id'),
+                        'expiry': doc.get('expiry', 86400),
+                        'downloads': doc.get('downloads', 0)
+                    }
+            return file_map
+        except Exception as e:
+            logger.error(f"Error loading files: {e}")
+            return {}
+    
+    def delete_file(self, file_hash: str):
+        """Delete file mapping from database"""
+        try:
+            self.files.delete_one({'file_hash': file_hash})
+            return True
+        except Exception as e:
+            logger.error(f"Error deleting file {file_hash}: {e}")
+            return False
+    
+    def update_file_downloads(self, file_hash: str, downloads: int):
+        """Update download count for a file"""
+        try:
+            self.files.update_one(
+                {'file_hash': file_hash},
+                {'$set': {'downloads': downloads}}
+            )
+        except Exception as e:
+            logger.error(f"Error updating downloads: {e}")
+    
+    def update_file_expiry(self, file_hash: str, expiry: int):
+        """Update expiry for a file"""
+        try:
+            self.files.update_one(
+                {'file_hash': file_hash},
+                {'$set': {'expiry': expiry}}
+            )
+        except Exception as e:
+            logger.error(f"Error updating expiry: {e}")
     
     # ==================== UTILITY METHODS ====================
     

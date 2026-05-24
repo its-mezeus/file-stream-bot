@@ -309,7 +309,7 @@
         const interval = setInterval(() => {
             seconds--;
             timer.textContent = seconds;
-            progress.style.width = ((15 - seconds) / 15 * 100) + '%';
+            progress.style.width = ((10 - seconds) / 10 * 100) + '%';
             if (seconds <= 0) {
                 clearInterval(interval);
                 countdown.innerHTML = '✅ Your file is ready!';
