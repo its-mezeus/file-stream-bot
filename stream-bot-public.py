@@ -910,7 +910,12 @@ async def start(client, message):
             buttons = []
             for i, channel in enumerate(not_joined, 1):
                 channel_name = channel.replace("@", "")
-                buttons.append([InlineKeyboardButton(f"📢 Join @{channel_name}", url=f"https://t.me/{channel_name}")])
+                try:
+                    chat = await client.get_chat(channel_name)
+                    display_name = chat.title or f"@{channel_name}"
+                except:
+                    display_name = f"@{channel_name}"
+                buttons.append([InlineKeyboardButton(f"📢 Join {display_name}", url=f"https://t.me/{channel_name}")])
             
             buttons.append([InlineKeyboardButton("✅ I've Joined — Verify Me", callback_data="check_joined")])
             
@@ -1470,7 +1475,12 @@ async def handle_file(client, message):
                 buttons = []
                 for i, channel in enumerate(not_joined, 1):
                     channel_name = channel.replace("@", "")
-                    buttons.append([InlineKeyboardButton(f"📢 Join @{channel_name}", url=f"https://t.me/{channel_name}")])
+                    try:
+                        chat = await client.get_chat(channel_name)
+                        display_name = chat.title or f"@{channel_name}"
+                    except:
+                        display_name = f"@{channel_name}"
+                    buttons.append([InlineKeyboardButton(f"📢 Join {display_name}", url=f"https://t.me/{channel_name}")])
                 
                 buttons.append([InlineKeyboardButton("✅ Joined - Try Again", url=f"https://t.me/{(await client.get_me()).username}")])
                 
