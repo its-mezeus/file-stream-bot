@@ -901,36 +901,7 @@ async def start(client, message):
         await message.reply("🚫 <b>YOU ARE BANNED!</b>\n\n<i>Contact owner for support</i>", parse_mode=enums.ParseMode.HTML)
         return
     
-    # Check force join
-    if FORCE_CHANNELS:
-        not_joined = await check_user_joined(client, user_id)
-        
-        if not_joined:
-            # User hasn't joined - show force join message
-            buttons = []
-            for i, channel in enumerate(not_joined, 1):
-                channel_name = channel.replace("@", "")
-                try:
-                    chat = await client.get_chat(channel_name)
-                    display_name = chat.title or f"@{channel_name}"
-                except:
-                    display_name = f"@{channel_name}"
-                buttons.append([InlineKeyboardButton(f"📢 Join {display_name}", url=f"https://t.me/{channel_name}")])
-            
-            buttons.append([InlineKeyboardButton("✅ I've Joined — Verify Me", callback_data="check_joined")])
-            
-            text = f"""🔐 <b>Join to continue</b>
-
-Hey <b>{name}</b>, join our channel(s) to use this bot ⚡"""
-            
-            await message.reply(
-                text,
-                reply_markup=InlineKeyboardMarkup(buttons),
-                parse_mode=enums.ParseMode.HTML
-            )
-            return
-    
-    # User has joined - show welcome
+    # Show welcome (no force join on /start)
     bot_me = await client.get_me()
     
     text = f"""🌟 <b>Welcome To File To Link Bot</b> 🌟
