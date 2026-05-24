@@ -1031,20 +1031,14 @@ Send me any file and get instant download link!
         # Show admin button if user is admin
         if user_id in ADMIN_IDS:
             kb = InlineKeyboardMarkup([
-                [
-                    InlineKeyboardButton("👤 Owner", url="https://t.me/zeus_is_here"),
-                    InlineKeyboardButton("❓ Help", callback_data="help")
-                ],
-                [
-                    InlineKeyboardButton("⚙️ Admin Panel", callback_data="admin_panel")
-                ]
+                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
+                [InlineKeyboardButton("☕ Donate", callback_data="donate")],
+                [InlineKeyboardButton("⚙️ Admin Panel", callback_data="admin_panel")]
             ])
         else:
             kb = InlineKeyboardMarkup([
-                [
-                    InlineKeyboardButton("👤 Owner", url="https://t.me/zeus_is_here"),
-                    InlineKeyboardButton("❓ Help", callback_data="help")
-                ]
+                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
+                [InlineKeyboardButton("☕ Donate", callback_data="donate")]
             ])
         
         await query.message.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
@@ -1713,7 +1707,8 @@ async def transcode_stream(req):
     info = file_map[file_hash]
     
     try:
-        msg = await bot.get_messages(info['chat_id'], info['message_id'])
+        stream_client = userbot if userbot.is_connected else bot
+        msg = await stream_client.get_messages(info['chat_id'], info['message_id'])
         
         response = web.StreamResponse(
             status=200,
@@ -1745,7 +1740,7 @@ async def transcode_stream(req):
         # Feed Telegram stream into ffmpeg stdin
         async def feed_ffmpeg():
             try:
-                async for chunk in bot.stream_media(msg):
+                async for chunk in stream_client.stream_media(msg):
                     ffmpeg.stdin.write(chunk)
                     await ffmpeg.stdin.drain()
                 ffmpeg.stdin.close()
@@ -2070,7 +2065,9 @@ async def stream_file(req):
     CHUNK_SIZE = 1024 * 1024  # 1MB (Pyrogram chunk size)
     
     try:
-        msg = await bot.get_messages(info['chat_id'], info['message_id'])
+        # Use userbot for streaming (higher concurrency limits than bot account)
+        stream_client = userbot if userbot.is_connected else bot
+        msg = await stream_client.get_messages(info['chat_id'], info['message_id'])
         
         # Sanitize filename for Content-Disposition
         safe_name = info["name"].encode('ascii', 'ignore').decode('ascii') or "download"
@@ -2151,7 +2148,7 @@ async def stream_file(req):
         else:
             print(f"Streaming {info['name']}...")
         
-        async for chunk in bot.stream_media(msg, offset=chunk_offset):
+        async for chunk in stream_client.stream_media(msg, offset=chunk_offset):
             if bytes_sent >= bytes_to_send:
                 break
             
