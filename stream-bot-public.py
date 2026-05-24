@@ -78,8 +78,8 @@ file_map = {}
 user_cooldowns = {}  # user_id -> last file timestamp
 
 # Bots
-bot = Client("streambot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
-userbot = Client("stream_user", api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING)
+bot = Client("streambot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN, max_concurrent_transmissions=10)
+userbot = Client("stream_user", api_id=API_ID, api_hash=API_HASH, session_string=SESSION_STRING, max_concurrent_transmissions=10)
 
 print("🤖 File To Link Bot")
 print("⚡ HTTP Downloads via Cloudflare")
