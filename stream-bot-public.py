@@ -1908,11 +1908,7 @@ HOME_PAGE = """<!DOCTYPE html>
             </div>
             <div class="stat">
                 <div class="stat-value">{total_files}</div>
-                <div class="stat-label">Files Shared</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">{total_downloads}</div>
-                <div class="stat-label">Downloads</div>
+                <div class="stat-label">Links Generated</div>
             </div>
         </div>
     </div>
@@ -1992,8 +1988,7 @@ HOME_PAGE = """<!DOCTYPE html>
 async def home(req):
     html = HOME_PAGE.format(
         total_users=len(stats['total_users']),
-        total_files=stats['total_files'],
-        total_downloads=stats['total_downloads']
+        total_files=stats['total_files']
     )
     return web.Response(text=html, content_type='text/html')
 
