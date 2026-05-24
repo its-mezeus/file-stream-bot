@@ -912,23 +912,22 @@ async def start(client, message):
                 channel_name = channel.replace("@", "")
                 buttons.append([InlineKeyboardButton(f"📢 Join Channel {i}", url=f"https://t.me/{channel_name}")])
             
-            buttons.append([InlineKeyboardButton("✅ Joined - Check Again", callback_data="check_joined")])
+            buttons.append([InlineKeyboardButton("✅ I've Joined — Verify Me", callback_data="check_joined")])
             
-            text = f"""🔒 <b>ACCESS REQUIRED!</b>
+            text = f"""╔═══════════════════╗
+       🔐 <b>HOLD UP!</b>
+╚═══════════════════╝
 
-Hey <b>{name}</b>! 👋
+Hey <a href="tg://user?id={user_id}"><b>{name}</b></a>! 👋
 
-To use this bot, you must join our channel(s):
+You're <b>one step away</b> from unlimited file sharing ⚡
 
-━━━━━━━━━━━━
+┌─────────────────────┐
+│  📢  Join our channel(s)    │
+│  to unlock <b>full access</b>       │
+└─────────────────────┘
 
-<b>Steps:</b>
-1️⃣ Click the button(s) below
-2️⃣ Join the channel(s)
-3️⃣ Click "✅ Joined" button
-
-━━━━━━━━━━━━
-⚡ <i>After joining, you'll get instant access!</i>"""
+⬇️ <b>Tap below to join, then hit verify</b>"""
             
             await message.reply(
                 text,
@@ -1475,14 +1474,13 @@ async def handle_file(client, message):
                 
                 buttons.append([InlineKeyboardButton("✅ Joined - Try Again", url=f"https://t.me/{(await client.get_me()).username}")])
                 
-                text = f"""🔒 <b>ACCESS REQUIRED!</b>
+                text = f"""╔═══════════════════╗
+       🔐 <b>HOLD UP!</b>
+╚═══════════════════╝
 
-Please join our channel(s) first to use this bot!
+You need to <b>join our channel(s)</b> first! 📢
 
-Click the button(s) below to join:
-
-━━━━━━━━━━━━
-⚡ <i>After joining, send your file again!</i>"""
+⬇️ <b>Tap below to join, then send your file again</b>"""
                 
                 await message.reply(
                     text,
