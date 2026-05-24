@@ -2228,15 +2228,29 @@ async def watch_page(req):
             <div class="btn-row">
                 <a href="/download/{file_hash}" class="dl-btn">📥 Download</a>
             </div>
-            <div class="btn-row" id="extPlayerRow">
-                <a id="mxBtn" class="dl-btn" style="background: linear-gradient(135deg, #ff6b35, #ff4500); color: #fff; flex: 1;" onclick="openMX(); return false;" href="#">📱 MX Player</a>
-                <a id="playitBtn" class="dl-btn" style="background: linear-gradient(135deg, #00c853, #009624); color: #fff; flex: 1;" onclick="openPlayit(); return false;" href="#">▶️ PLAYit</a>
+            <div style="margin-top:20px;">
+                <div style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:12px;">External Players</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <a href="#" onclick="openVLC();return false;" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+                        <img src="https://i.postimg.cc/15TQ4y7B/vlc.png" width="40" height="40" style="border-radius:10px;">
+                        <span style="color:#fff;font-size:13px;font-weight:600;">VLC Player</span>
+                    </a>
+                    <a href="#" onclick="openMX();return false;" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+                        <img src="https://i.postimg.cc/sx4Msv4T/mx.png" width="40" height="40" style="border-radius:10px;">
+                        <span style="color:#fff;font-size:13px;font-weight:600;">MX Player</span>
+                    </a>
+                    <a href="#" onclick="openKM();return false;" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+                        <img src="https://i.postimg.cc/wT9tFQ9Z/km.png" width="40" height="40" style="border-radius:10px;">
+                        <span style="color:#fff;font-size:13px;font-weight:600;">KMPlayer</span>
+                    </a>
+                    <a href="#" onclick="openPlayit();return false;" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='rgba(255,255,255,0.04)'">
+                        <img src="https://i.postimg.cc/RVGWYJFF/playit.png" width="40" height="40" style="border-radius:10px;">
+                        <span style="color:#fff;font-size:13px;font-weight:600;">PLAYit</span>
+                    </a>
+                </div>
             </div>
-            <div class="tip">
-                💡 <b>Tip:</b> All formats supported (MP4, MKV, AVI etc). If buffering, let it load for a few seconds.
-            </div>
-            <div class="tip" style="background: rgba(255, 80, 80, 0.1); border-color: rgba(255, 80, 80, 0.2);">
-                ⚠️ <b>Multi-Audio Notice:</b> If the movie has 2 or more audio languages, the browser will only play the default track. <b>Download the file</b> and use <b>VLC / MX Player</b> to switch between audio languages.
+            <div class="tip" style="margin-top:12px;">
+                ⚠️ For audio track or subtitle selection, use external players such as <b>VLC</b>.
             </div>
         </div>
     </div>
@@ -2248,6 +2262,26 @@ async def watch_page(req):
         const statusBar = document.getElementById('status-bar');
         const fullStreamUrl = window.location.origin + '/stream/{file_hash}?play=1';
         const videoTitle = '{name}';
+        
+        function openVLC() {{
+            // VLC Android intent
+            const intentUrl = 'intent:' + fullStreamUrl + '#Intent;package=org.videolan.vlc;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=org.videolan.vlc') + ';end';
+            var iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = intentUrl;
+            document.body.appendChild(iframe);
+            setTimeout(function() {{ document.body.removeChild(iframe); }}, 3000);
+        }}
+        
+        function openKM() {{
+            // KMPlayer Android intent
+            const intentUrl = 'intent:' + fullStreamUrl + '#Intent;package=com.kmplayer;type=video/*;S.title=' + encodeURIComponent(videoTitle) + ';S.browser_fallback_url=' + encodeURIComponent('https://play.google.com/store/apps/details?id=com.kmplayer') + ';end';
+            var iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = intentUrl;
+            document.body.appendChild(iframe);
+            setTimeout(function() {{ document.body.removeChild(iframe); }}, 3000);
+        }}
         
         function openMX() {{
             // MX Player Android intent with S.browser_fallback_url
