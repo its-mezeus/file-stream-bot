@@ -59,6 +59,18 @@ maintenance = {
     'resume_time': None  # datetime when bot auto-resumes, None = indefinite
 }
 
+# Link Expiry Settings (in seconds)
+EXPIRY_OPTIONS = {
+    '12h': 43200,
+    '24h': 86400,
+    '48h': 172800,
+    '72h': 259200,
+    '7d': 604800,
+    'permanent': 0  # 0 = never expires
+}
+DEFAULT_EXPIRY = 86400  # 24 hours default
+link_expiry = {'default': DEFAULT_EXPIRY}  # Will be loaded from DB
+
 # Statistics
 stats = {
     'total_users': set(),
@@ -432,6 +444,75 @@ async def send_to_user(client, message):
             "Or reply to a message with <code>/sendto user_id</code>",
             parse_mode=enums.ParseMode.HTML
         )
+
+
+@bot.on_message(filters.command("setexpiry") & filters.user(ADMIN_IDS))
+async def set_expiry(client, message):
+    """Set default link expiry time - Admin only"""
+    try:
+        if len(message.command) < 2:
+            current = link_expiry['default']
+            if current == 0:
+                current_display = "♾️ Permanent"
+            elif current >= 86400:
+                current_display = f"{current // 86400}d"
+            else:
+                current_display = f"{current // 3600}h"
+            
+            text = f"""⏰ <b>LINK EXPIRY SETTINGS</b>
+
+📌 <b>Current Default:</b> {current_display}
+
+<b>Usage:</b> <code>/setexpiry &lt;time&gt;</code>
+
+<b>Options:</b>
+• <code>/setexpiry 12h</code> — 12 hours
+• <code>/setexpiry 24h</code> — 24 hours
+• <code>/setexpiry 48h</code> — 48 hours
+• <code>/setexpiry 72h</code> — 72 hours
+• <code>/setexpiry 7d</code> — 7 days
+• <code>/setexpiry permanent</code> — Never expire
+
+━━━━━━━━━━━━
+⚡ <i>Changes apply to new links only</i>"""
+            await message.reply(text, parse_mode=enums.ParseMode.HTML)
+            return
+        
+        option = message.command[1].lower()
+        
+        if option not in EXPIRY_OPTIONS:
+            await message.reply(
+                "❌ <b>Invalid option!</b>\n\nUse: <code>12h, 24h, 48h, 72h, 7d, permanent</code>",
+                parse_mode=enums.ParseMode.HTML
+            )
+            return
+        
+        link_expiry['default'] = EXPIRY_OPTIONS[option]
+        
+        # Save to database
+        if USE_DATABASE and db:
+            db.db['settings'].update_one(
+                {'key': 'link_expiry'},
+                {'$set': {'key': 'link_expiry', 'value': EXPIRY_OPTIONS[option]}},
+                upsert=True
+            )
+        
+        display = "♾️ Permanent (never expire)" if option == 'permanent' else option
+        
+        text = f"""✅ <b>EXPIRY UPDATED!</b>
+
+⏰ <b>New Default:</b> {display}
+
+<i>All new links will use this expiry time.</i>
+<i>Existing links are not affected.</i>
+
+━━━━━━━━━━━━
+💾 <i>Saved to database</i>"""
+        
+        await message.reply(text, parse_mode=enums.ParseMode.HTML)
+        
+    except Exception as e:
+        await message.reply(f"❌ <b>Error:</b> {str(e)}", parse_mode=enums.ParseMode.HTML)
 
 
 @bot.on_message(filters.command("feedback"))
@@ -997,6 +1078,7 @@ Send me any file and get instant download link!
 <code>/off 30</code> - Pause for 30 minutes
 <code>/on</code> - Resume bot
 <code>/restart</code> - Restart bot
+<code>/setexpiry 24h</code> - Set link expiry
 
 ━━━━━━━━━━━━
 ⚡ <i>Send commands in chat</i>"""
@@ -1141,6 +1223,178 @@ Just send and get link!
             parse_mode=enums.ParseMode.HTML
         )
 
+
+    # Change expiry callback — show options
+    if query.data.startswith("expiry_"):
+        file_hash = query.data[7:]
+        if file_hash not in file_map:
+            await query.answer("❌ Link not found!", show_alert=True)
+            return
+        
+        info = file_map[file_hash]
+        # Only link owner or admin can change expiry
+        if query.from_user.id != info.get('user_id') and query.from_user.id not in ADMIN_IDS:
+            await query.answer("❌ Only the link owner can change expiry!", show_alert=True)
+            return
+        
+        current = info.get('expiry', 86400)
+        if current == 0:
+            current_display = "♾️ Permanent"
+        elif current >= 86400:
+            current_display = f"{current // 86400} day(s)"
+        else:
+            current_display = f"{current // 3600} hour(s)"
+        
+        kb = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton("12h", callback_data=f"setexp_{file_hash}_12h"),
+                InlineKeyboardButton("24h", callback_data=f"setexp_{file_hash}_24h"),
+                InlineKeyboardButton("48h", callback_data=f"setexp_{file_hash}_48h"),
+            ],
+            [
+                InlineKeyboardButton("72h", callback_data=f"setexp_{file_hash}_72h"),
+                InlineKeyboardButton("7 Days", callback_data=f"setexp_{file_hash}_7d"),
+                InlineKeyboardButton("♾️ Permanent", callback_data=f"setexp_{file_hash}_permanent"),
+            ],
+            [InlineKeyboardButton("🔙 Back", callback_data=f"expback_{file_hash}")]
+        ])
+        
+        await query.message.edit(
+            f"⏰ <b>Change Link Expiry</b>\n\n"
+            f"📄 <b>{info['name']}</b>\n\n"
+            f"📌 <b>Current:</b> {current_display}\n\n"
+            f"Select new expiry time:",
+            reply_markup=kb,
+            parse_mode=enums.ParseMode.HTML
+        )
+        return
+    
+    # Set expiry for specific link
+    if query.data.startswith("setexp_"):
+        parts = query.data.split("_", 2)  # setexp, hash, option
+        if len(parts) < 3:
+            await query.answer("❌ Invalid!", show_alert=True)
+            return
+        
+        file_hash = parts[1]
+        option = parts[2]
+        
+        if file_hash not in file_map:
+            await query.answer("❌ Link not found!", show_alert=True)
+            return
+        
+        info = file_map[file_hash]
+        if query.from_user.id != info.get('user_id') and query.from_user.id not in ADMIN_IDS:
+            await query.answer("❌ Only the link owner can change expiry!", show_alert=True)
+            return
+        
+        if option not in EXPIRY_OPTIONS:
+            await query.answer("❌ Invalid option!", show_alert=True)
+            return
+        
+        new_expiry = EXPIRY_OPTIONS[option]
+        file_map[file_hash]['expiry'] = new_expiry
+        
+        if new_expiry == 0:
+            display = "♾️ Permanent (never expire)"
+        elif new_expiry >= 86400:
+            display = f"{new_expiry // 86400} day(s)"
+        else:
+            display = f"{new_expiry // 3600} hour(s)"
+        
+        await query.answer(f"✅ Expiry set to {display}", show_alert=True)
+        
+        # Rebuild the original link message
+        name = info['name']
+        size = info['size']
+        if size >= 1024 * 1024:
+            size_display = f"{size / (1024 * 1024):.2f} MB"
+        else:
+            size_display = f"{size / 1024:.2f} KB"
+        
+        dl_link = f"{PUBLIC_URL}/download/{file_hash}"
+        watch_link = dl_link.replace('/download/', '/watch/')
+        video_exts = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.flv', '.wmv', '.m4v', '.3gp')
+        
+        text = f"""✅ <b>Link Ready!</b>
+
+📄 <b>Name:</b> <code>{name}</code>
+📊 <b>Size:</b> <code>{size_display}</code>
+
+🔗 <b>Download Link:</b>
+<code>{dl_link}</code>
+
+⏰ <i>Link expires in {display}</i>
+━━━━━━━━━━━━
+⚡ <i>By Zeus</i>"""
+        
+        if name.lower().endswith(video_exts):
+            kb = InlineKeyboardMarkup([
+                [InlineKeyboardButton("📥 Download", url=dl_link), InlineKeyboardButton("▶️ Watch Online", url=watch_link)],
+                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
+            ])
+        else:
+            kb = InlineKeyboardMarkup([
+                [InlineKeyboardButton("📥 Download", url=dl_link)],
+                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
+            ])
+        
+        await query.message.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
+        return
+    
+    # Back from expiry menu
+    if query.data.startswith("expback_"):
+        file_hash = query.data[8:]
+        if file_hash not in file_map:
+            await query.answer("❌ Link not found!", show_alert=True)
+            return
+        
+        info = file_map[file_hash]
+        name = info['name']
+        size = info['size']
+        current_expiry = info.get('expiry', 86400)
+        
+        if size >= 1024 * 1024:
+            size_display = f"{size / (1024 * 1024):.2f} MB"
+        else:
+            size_display = f"{size / 1024:.2f} KB"
+        
+        if current_expiry == 0:
+            expiry_display = "♾️ Permanent"
+        elif current_expiry >= 86400:
+            expiry_display = f"{current_expiry // 86400} day(s)"
+        else:
+            expiry_display = f"{current_expiry // 3600} hour(s)"
+        
+        dl_link = f"{PUBLIC_URL}/download/{file_hash}"
+        watch_link = dl_link.replace('/download/', '/watch/')
+        video_exts = ('.mp4', '.mkv', '.avi', '.mov', '.webm', '.flv', '.wmv', '.m4v', '.3gp')
+        
+        text = f"""✅ <b>Link Ready!</b>
+
+📄 <b>Name:</b> <code>{name}</code>
+📊 <b>Size:</b> <code>{size_display}</code>
+
+🔗 <b>Download Link:</b>
+<code>{dl_link}</code>
+
+⏰ <i>Link expires in {expiry_display}</i>
+━━━━━━━━━━━━
+⚡ <i>By Zeus</i>"""
+        
+        if name.lower().endswith(video_exts):
+            kb = InlineKeyboardMarkup([
+                [InlineKeyboardButton("📥 Download", url=dl_link), InlineKeyboardButton("▶️ Watch Online", url=watch_link)],
+                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
+            ])
+        else:
+            kb = InlineKeyboardMarkup([
+                [InlineKeyboardButton("📥 Download", url=dl_link)],
+                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
+            ])
+        
+        await query.message.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
+        return
 
     # Revoke link callback
     if query.data.startswith("revoke_"):
@@ -1324,7 +1578,8 @@ Click the button(s) below to join:
             'size': size,
             'duration': duration,
             'created_at': _time.time(),
-            'user_id': message.from_user.id
+            'user_id': message.from_user.id,
+            'expiry': link_expiry['default']  # 0 = permanent
         }
         
         # Set cooldown
@@ -1337,6 +1592,15 @@ Click the button(s) below to join:
         else:
             size_display = f"{size / 1024:.2f} KB"
         
+        # Expiry display
+        current_expiry = link_expiry['default']
+        if current_expiry == 0:
+            expiry_display = "♾️ Permanent"
+        elif current_expiry >= 86400:
+            expiry_display = f"{current_expiry // 86400} day(s)"
+        else:
+            expiry_display = f"{current_expiry // 3600} hour(s)"
+        
         text = f"""✅ <b>Link Ready!</b>
 
 📄 <b>Name:</b> <code>{name}</code>
@@ -1345,7 +1609,7 @@ Click the button(s) below to join:
 🔗 <b>Download Link:</b>
 <code>{dl_link}</code>
 
-⏰ <i>Link expires in 24 hours</i>
+⏰ <i>Link expires in {expiry_display}</i>
 ━━━━━━━━━━━━
 ⚡ <i>By Zeus</i>"""
         
@@ -1355,12 +1619,12 @@ Click the button(s) below to join:
         if name.lower().endswith(video_exts):
             kb = InlineKeyboardMarkup([
                 [InlineKeyboardButton("📥 Download", url=dl_link), InlineKeyboardButton("▶️ Watch Online", url=watch_link)],
-                [InlineKeyboardButton("🗑️ Revoke Link", callback_data=f"revoke_{file_hash}")]
+                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
             ])
         else:
             kb = InlineKeyboardMarkup([
                 [InlineKeyboardButton("📥 Download", url=dl_link)],
-                [InlineKeyboardButton("🗑️ Revoke Link", callback_data=f"revoke_{file_hash}")]
+                [InlineKeyboardButton("⏰ Change Expiry", callback_data=f"expiry_{file_hash}"), InlineKeyboardButton("🗑️ Revoke", callback_data=f"revoke_{file_hash}")]
             ])
         
         await msg.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
@@ -2219,6 +2483,21 @@ async def main():
             BANNED_USERS.add(user_data['user_id'])
         print(f"✅ Loaded {len(BANNED_USERS)} banned users")
         
+        # Load link expiry setting
+        try:
+            expiry_setting = db.db['settings'].find_one({'key': 'link_expiry'})
+            if expiry_setting:
+                link_expiry['default'] = expiry_setting['value']
+                exp_val = link_expiry['default']
+                if exp_val == 0:
+                    print("✅ Link expiry: Permanent")
+                elif exp_val >= 86400:
+                    print(f"✅ Link expiry: {exp_val // 86400}d")
+                else:
+                    print(f"✅ Link expiry: {exp_val // 3600}h")
+        except:
+            pass
+        
         # Load all users into stats
         all_users = db.get_all_users(limit=10000)
         stats['total_users'].clear()
@@ -2265,7 +2544,11 @@ async def main():
             expired = []
             for fhash, info in list(file_map.items()):
                 created = info.get('created_at', 0)
-                if created > 0 and (now - created) >= 86400:  # 24 hours
+                expiry = info.get('expiry', 86400)
+                # Skip permanent links (expiry = 0)
+                if expiry == 0:
+                    continue
+                if created > 0 and (now - created) >= expiry:
                     expired.append(fhash)
             
             for fhash in expired:
@@ -2273,6 +2556,11 @@ async def main():
                 if info:
                     name = info.get('name', 'Unknown')
                     uid = info.get('user_id')
+                    expiry_val = info.get('expiry', 86400)
+                    if expiry_val >= 86400:
+                        exp_display = f"{expiry_val // 86400} day(s)"
+                    else:
+                        exp_display = f"{expiry_val // 3600} hour(s)"
                     print(f"🗑️ Expired: {name}")
                     # Notify user
                     if uid:
@@ -2281,7 +2569,7 @@ async def main():
                                 uid,
                                 f"⏰ <b>Link Expired!</b>\n\n"
                                 f"📄 <b>{name}</b>\n\n"
-                                f"❌ Your download link has expired after 24 hours.\n"
+                                f"❌ Your download link has expired after {exp_display}.\n"
                                 f"Send the file again to generate a new link.",
                                 parse_mode=enums.ParseMode.HTML
                             )
