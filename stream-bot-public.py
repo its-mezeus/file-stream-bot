@@ -1899,6 +1899,7 @@ HOME_PAGE = """<!DOCTYPE html>
         <div class="hero-buttons">
             <a href="https://t.me/Filetolinkzeus_bot" class="btn-primary">🤖 Start Bot</a>
             <a href="https://t.me/ZEUS_IS_HERE2" class="btn-secondary">👤 Contact Zeus</a>
+            <a href="https://t.me/ZEUS_IS_HERE2" class="btn-secondary" style="background:rgba(255,154,0,0.08);border-color:rgba(255,154,0,0.2);color:#ff9a00;">☕ Donate</a>
         </div>
         <div class="stats">
             <div class="stat">
