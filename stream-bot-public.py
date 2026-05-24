@@ -1659,9 +1659,342 @@ Click the button(s) below to join:
 # Web server
 routes = web.RouteTableDef()
 
+HOME_PAGE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ File To Link Bot — Fast & Secure File Sharing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #07070d;
+            color: #fff;
+            overflow-x: hidden;
+        }}
+        /* Hero */
+        .hero {{
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+            overflow: hidden;
+        }}
+        .hero::before {{
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.12) 0%, rgba(255, 154, 0, 0.05) 40%, transparent 70%);
+            pointer-events: none;
+        }}
+        .hero-badge {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 215, 0, 0.08);
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 12px;
+            color: #ffd700;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 32px;
+        }}
+        .hero-badge .dot {{
+            width: 6px; height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+            animation: pulse 2s infinite;
+        }}
+        @keyframes pulse {{
+            0%, 100% {{ opacity: 1; }}
+            50% {{ opacity: 0.4; }}
+        }}
+        .hero-icon {{
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, #ffd700, #ff9a00);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 40px rgba(255, 215, 0, 0.2);
+        }}
+        .hero h1 {{
+            font-size: clamp(32px, 6vw, 56px);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }}
+        .hero h1 .accent {{ color: #ffd700; }}
+        .hero p {{
+            font-size: 17px;
+            color: rgba(255, 255, 255, 0.5);
+            max-width: 520px;
+            line-height: 1.7;
+            margin-bottom: 36px;
+        }}
+        .hero-buttons {{ display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }}
+        .btn-primary {{
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ffd700, #ff9a00);
+            color: #0a0a0f;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
+        }}
+        .btn-primary:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.35);
+        }}
+        .btn-secondary {{
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 32px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }}
+        .btn-secondary:hover {{
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }}
+        /* Stats */
+        .stats {{
+            display: flex;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }}
+        .stat {{ text-align: center; }}
+        .stat-value {{ font-size: 28px; font-weight: 800; color: #ffd700; }}
+        .stat-label {{ font-size: 12px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 4px; font-weight: 500; }}
+        /* Features */
+        .features {{
+            padding: 80px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }}
+        .features-title {{
+            text-align: center;
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 48px;
+        }}
+        .features-grid {{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }}
+        .feature-card {{
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }}
+        .feature-card:hover {{
+            border-color: rgba(255, 215, 0, 0.15);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }}
+        .feature-icon {{
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 16px;
+        }}
+        .feature-card h3 {{ font-size: 16px; font-weight: 700; margin-bottom: 8px; }}
+        .feature-card p {{ font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }}
+        /* How it works */
+        .how {{
+            padding: 60px 20px 80px;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }}
+        .how-title {{ font-size: 28px; font-weight: 800; margin-bottom: 40px; }}
+        .steps {{ display: flex; flex-direction: column; gap: 20px; text-align: left; }}
+        .step {{
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 20px;
+        }}
+        .step-num {{
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #ffd700, #ff9a00);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            color: #0a0a0f;
+            flex-shrink: 0;
+        }}
+        .step h4 {{ font-size: 15px; font-weight: 700; margin-bottom: 4px; }}
+        .step p {{ font-size: 13px; color: rgba(255,255,255,0.45); }}
+        /* Footer */
+        .footer {{
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }}
+        .footer-text {{ color: rgba(255,255,255,0.2); font-size: 12px; }}
+        .footer-text a {{ color: rgba(255, 215, 0, 0.5); text-decoration: none; }}
+        .footer-text a:hover {{ color: #ffd700; }}
+        /* Animations */
+        @keyframes fadeInUp {{
+            from {{ opacity: 0; transform: translateY(30px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+        .hero-icon {{ animation: fadeInUp 0.6s ease; }}
+        .hero h1 {{ animation: fadeInUp 0.6s ease 0.1s both; }}
+        .hero p {{ animation: fadeInUp 0.6s ease 0.2s both; }}
+        .hero-buttons {{ animation: fadeInUp 0.6s ease 0.3s both; }}
+        .stats {{ animation: fadeInUp 0.6s ease 0.4s both; }}
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-badge"><span class="dot"></span> Bot Online — {total_users} Users Served</div>
+        <div class="hero-icon">⚡</div>
+        <h1>File To Link <span class="accent">Bot</span></h1>
+        <p>Send any file to our Telegram bot and get instant download & streaming links. Fast, secure, and free.</p>
+        <div class="hero-buttons">
+            <a href="https://t.me/Filetolinkzeus_bot" class="btn-primary">🤖 Start Bot</a>
+            <a href="https://t.me/ZEUS_IS_HERE2" class="btn-secondary">👤 Contact Zeus</a>
+        </div>
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">{total_users}</div>
+                <div class="stat-label">Users</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">{total_files}</div>
+                <div class="stat-label">Files Shared</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">{total_downloads}</div>
+                <div class="stat-label">Downloads</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="features-title">Why Choose Us?</div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.15);">⚡</div>
+                <h3>Ultra Fast Speeds</h3>
+                <p>Optimized for high-speed downloads and streaming. No more waiting for Telegram to buffer large files.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.15);">🎬</div>
+                <h3>Direct Streaming</h3>
+                <p>Watch videos instantly in your browser or external players like VLC, MX Player, KMPlayer & PLAYit.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.15);">📦</div>
+                <h3>No File Size Limits</h3>
+                <p>Whether it's a 10MB document or a 4GB video, we handle it effortlessly. Any file Telegram supports.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.15);">🔒</div>
+                <h3>Secure & Private</h3>
+                <p>We don't log your files or share them. Links are unique and hard to guess, keeping your content safe.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.15);">⏱️</div>
+                <h3>Auto-Expiry Links</h3>
+                <p>All generated links automatically expire for security. Configurable from 12 hours to permanent.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(255,154,0,0.1);border:1px solid rgba(255,154,0,0.15);">🚀</div>
+                <h3>One-Click Use</h3>
+                <p>No complicated commands. Just send a file to the bot and get your links instantly in seconds.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="how">
+        <div class="how-title">How It Works</div>
+        <div class="steps">
+            <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                    <h4>Send Your File</h4>
+                    <p>Open <a href="https://t.me/Filetolinkzeus_bot" style="color:#ffd700;text-decoration:none;">@Filetolinkzeus_bot</a> on Telegram and send any file — video, document, audio, photo.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                    <h4>Get Instant Links</h4>
+                    <p>The bot generates a download link and a streaming link (for videos) within seconds.</p>
+                </div>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                    <h4>Share & Enjoy</h4>
+                    <p>Share the link anywhere. Recipients can download directly in their browser — no Telegram needed.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-text">
+            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By <a href="https://t.me/ZEUS_IS_HERE2">Zeus</a> ⚡
+        </div>
+    </div>
+</body>
+</html>"""
+
 @routes.get('/')
 async def home(req):
-    return web.Response(text="<h1>⚡ File To Link Bot by Zeus ⚡</h1>", content_type='text/html')
+    html = HOME_PAGE.format(
+        total_users=len(stats['total_users']),
+        total_files=stats['total_files'],
+        total_downloads=stats['total_downloads']
+    )
+    return web.Response(text=html, content_type='text/html')
 
 def get_file_icon(filename):
     """Get emoji icon based on file extension"""
