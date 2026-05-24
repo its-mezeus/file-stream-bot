@@ -88,6 +88,7 @@ DOWNLOAD_DIR.mkdir(exist_ok=True)
 # File mapping: hash -> {file_id, name, size, chat_id, message_id}
 file_map = {}
 user_cooldowns = {}  # user_id -> last file timestamp
+pending_files = {}  # user_id -> message object (file waiting for force join)
 
 # Bots
 bot = Client("streambot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN, max_concurrent_transmissions=10)
@@ -959,41 +960,19 @@ async def callbacks(client, query):
                 await query.answer("❌ Please join all channels first!", show_alert=True)
                 return
         
-        # User joined - show welcome
-        await query.answer("✅ Access granted!", show_alert=True)
-        
-        bot_me = await client.get_me()
-        name = query.from_user.first_name
+        # User joined - check if they have a pending file
         user_id = query.from_user.id
+        pending_msg = pending_files.pop(user_id, None)
         
-        text = f"""🌟 <b>Welcome To File To Link Bot</b> 🌟
-
-Hey <a href="tg://user?id={user_id}">{name}</a>! 👋
-
-Send me any file and get instant download link!
-
-📎 <i>All file types supported</i>
-⚡ <i>Instant link generation</i>
-🌐 <i>Direct browser downloads</i>
-💪 <i>Fast and Furious</i>
-
-━━━━━━━━━━━━
-⚡ <i>By Zeus</i>"""
-        
-        # Show admin button if user is admin
-        if user_id in ADMIN_IDS:
-            kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
-                [InlineKeyboardButton("☕ Donate", callback_data="donate")],
-                [InlineKeyboardButton("⚙️ Admin Panel", callback_data="admin_panel")]
-            ])
+        if pending_msg:
+            # Process the pending file
+            await query.answer("✅ Verified! Generating your link...", show_alert=True)
+            await query.message.delete()
+            await handle_file(client, pending_msg)
         else:
-            kb = InlineKeyboardMarkup([
-                [InlineKeyboardButton("👤 Owner", url="https://t.me/ZEUS_IS_HERE2"), InlineKeyboardButton("❓ Help", callback_data="help")],
-                [InlineKeyboardButton("☕ Donate", callback_data="donate")]
-            ])
-        
-        await query.message.edit(text, reply_markup=kb, parse_mode=enums.ParseMode.HTML)
+            # No pending file - just confirm
+            await query.answer("✅ Access granted! Now send me a file.", show_alert=True)
+            await query.message.delete()
         return
     
     await query.answer()
@@ -1443,6 +1422,9 @@ async def handle_file(client, message):
                     buttons.append([InlineKeyboardButton(f"📢 Join {display_name}", url=f"https://t.me/{channel_name}")])
                 
                 buttons.append([InlineKeyboardButton("✅ I've Joined — Verify Me", callback_data="check_joined")])
+                
+                # Store the file message so we can process it after verification
+                pending_files[message.from_user.id] = message
                 
                 name = message.from_user.first_name or "User"
                 text = f"""🔐 <b>Join to continue</b>
