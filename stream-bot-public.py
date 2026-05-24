@@ -1471,11 +1471,12 @@ async def handle_file(client, message):
                         display_name = f"@{channel_name}"
                     buttons.append([InlineKeyboardButton(f"📢 Join {display_name}", url=f"https://t.me/{channel_name}")])
                 
-                buttons.append([InlineKeyboardButton("✅ Joined - Try Again", url=f"https://t.me/{(await client.get_me()).username}")])
+                buttons.append([InlineKeyboardButton("✅ I've Joined — Verify Me", url=f"https://t.me/{(await client.get_me()).username}")])
                 
+                name = message.from_user.first_name or "User"
                 text = f"""🔐 <b>Join to continue</b>
 
-Join our channel(s) first, then send your file again ⚡"""
+Hey <b>{name}</b>, join our channel(s) to use this bot ⚡"""
                 
                 await message.reply(
                     text,
