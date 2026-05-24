@@ -1568,7 +1568,7 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
         </div>
     </div>
     <script>
-        let seconds = 15;
+        let seconds = 10;
         const timer = document.getElementById('timer');
         const btn = document.getElementById('downloadBtn');
         const progress = document.getElementById('progress');
