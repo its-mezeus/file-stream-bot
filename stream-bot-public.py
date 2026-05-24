@@ -2139,7 +2139,8 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="position:relative;">
+        <a href="/" style="position:absolute;top:14px;left:14px;width:32px;height:32px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:8px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:14px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">🏠</a>
         <div class="logo">⚡</div>
         <div class="brand">File To Link Bot</div>
         <div class="tagline">Fast & Secure File Sharing</div>
@@ -2555,6 +2556,7 @@ async def watch_page(req):
     </style>
 </head>
 <body>
+    <a href="/" style="position:fixed;top:12px;left:12px;width:34px;height:34px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.12);border-radius:9px;display:flex;align-items:center;justify-content:center;text-decoration:none;font-size:15px;z-index:999;backdrop-filter:blur(10px);transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(0,0,0,0.5)'">🏠</a>
     <div class="player-container">
         <div class="video-wrapper" id="videoWrapper">
             <video id="player" controls autoplay playsinline preload="auto"></video>
