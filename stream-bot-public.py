@@ -919,20 +919,9 @@ async def start(client, message):
             
             buttons.append([InlineKeyboardButton("✅ I've Joined — Verify Me", callback_data="check_joined")])
             
-            text = f"""╔═══════════════════╗
-       🔐 <b>HOLD UP!</b>
-╚═══════════════════╝
+            text = f"""🔐 <b>Join to continue</b>
 
-Hey <a href="tg://user?id={user_id}"><b>{name}</b></a>! 👋
-
-You're <b>one step away</b> from unlimited file sharing ⚡
-
-┌─────────────────────┐
-│  📢  Join our channel(s)    │
-│  to unlock <b>full access</b>       │
-└─────────────────────┘
-
-⬇️ <b>Tap below to join, then hit verify</b>"""
+Hey <b>{name}</b>, join our channel(s) to use this bot ⚡"""
             
             await message.reply(
                 text,
@@ -1484,13 +1473,9 @@ async def handle_file(client, message):
                 
                 buttons.append([InlineKeyboardButton("✅ Joined - Try Again", url=f"https://t.me/{(await client.get_me()).username}")])
                 
-                text = f"""╔═══════════════════╗
-       🔐 <b>HOLD UP!</b>
-╚═══════════════════╝
+                text = f"""🔐 <b>Join to continue</b>
 
-You need to <b>join our channel(s)</b> first! 📢
-
-⬇️ <b>Tap below to join, then send your file again</b>"""
+Join our channel(s) first, then send your file again ⚡"""
                 
                 await message.reply(
                     text,
