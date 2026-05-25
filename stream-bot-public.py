@@ -2278,7 +2278,6 @@ async def download_page(req):
     info = file_map[file_hash]
     name = info['name']
     size = info['size']
-    await log_visitor(req, f"📥 Download — {name}")
     
     # Size display
     if size >= 1024 * 1024 * 1024:
@@ -2402,7 +2401,6 @@ async def watch_page(req):
     info = file_map[file_hash]
     name = info['name']
     size = info['size']
-    await log_visitor(req, f"🎬 Watch — {name}")
     duration = info.get('duration', 0)
     
     if size >= 1024 * 1024 * 1024:
