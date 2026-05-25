@@ -1625,7 +1625,7 @@ HOME_PAGE = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ File To Link Bot — Fast & Secure File Sharing</title>
+    <title>File To Link Bot — Fast & Secure File Sharing</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -1636,6 +1636,8 @@ HOME_PAGE = """<!DOCTYPE html>
             color: #fff;
             overflow-x: hidden;
         }}
+        .ic {{ display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }}
+        .ic svg {{ display: block; }}
         /* Hero */
         .hero {{
             min-height: 100vh;
@@ -1691,7 +1693,6 @@ HOME_PAGE = """<!DOCTYPE html>
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
             margin-bottom: 28px;
             box-shadow: 0 8px 40px rgba(255, 215, 0, 0.2);
         }}
@@ -1793,7 +1794,6 @@ HOME_PAGE = """<!DOCTYPE html>
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
             margin-bottom: 16px;
         }}
         .feature-card h3 {{ font-size: 16px; font-weight: 700; margin-bottom: 8px; }}
@@ -1854,13 +1854,13 @@ HOME_PAGE = """<!DOCTYPE html>
 <body>
     <div class="hero">
         <div class="hero-badge"><span class="dot"></span> Bot Online — {total_users} Users Served</div>
-        <div class="hero-icon">⚡</div>
+        <div class="hero-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
         <h1>File To Link <span class="accent">Bot</span></h1>
         <p>Send any file to our Telegram bot and get instant download & streaming links. Fast, secure, and free.</p>
         <div class="hero-buttons">
-            <a href="https://t.me/Filetolinkzeus_bot" class="btn-primary">🤖 Start Bot</a>
-            <a href="https://t.me/ZEUS_IS_HERE2" class="btn-secondary">👤 Contact Zeus</a>
-            <a href="https://t.me/ZEUS_IS_HERE2" class="btn-secondary" style="background:rgba(255,154,0,0.08);border-color:rgba(255,154,0,0.2);color:#ff9a00;">☕ Donate</a>
+            <a href="https://t.me/Filetolinkzeus_bot" class="btn-primary"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0f" stroke="none"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg></span> Start Bot</a>
+            <a href="https://t.me/ZEUS_IS_HERE2" class="btn-secondary"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span> Contact Zeus</a>
+            <a href="https://t.me/ZEUS_IS_HERE2" class="btn-secondary" style="background:rgba(255,154,0,0.08);border-color:rgba(255,154,0,0.2);color:#ff9a00;"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span> Donate</a>
         </div>
         <div class="stats">
             <div class="stat">
@@ -1878,32 +1878,32 @@ HOME_PAGE = """<!DOCTYPE html>
         <div class="features-title">Why Choose Us?</div>
         <div class="features-grid">
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.15);">⚡</div>
+                <div class="feature-icon" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
                 <h3>Ultra Fast Speeds</h3>
                 <p>Optimized for high-speed downloads and streaming. No more waiting for Telegram to buffer large files.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.15);">🎬</div>
+                <div class="feature-icon" style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00d4ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>
                 <h3>Direct Streaming</h3>
                 <p>Watch videos instantly in your browser or external players like VLC, MX Player, KMPlayer & PLAYit.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.15);">📦</div>
+                <div class="feature-icon" style="background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
                 <h3>No File Size Limits</h3>
                 <p>Whether it's a 10MB document or a 4GB video, we handle it effortlessly. Any file Telegram supports.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.15);">🔒</div>
+                <div class="feature-icon" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
                 <h3>Secure & Private</h3>
                 <p>We don't log your files or share them. Links are unique and hard to guess, keeping your content safe.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.15);">⏱️</div>
+                <div class="feature-icon" style="background:rgba(255,100,100,0.1);border:1px solid rgba(255,100,100,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff6464" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
                 <h3>Auto-Expiry Links</h3>
                 <p>All generated links automatically expire for security. Configurable from 12 hours to permanent.</p>
             </div>
             <div class="feature-card">
-                <div class="feature-icon" style="background:rgba(255,154,0,0.1);border:1px solid rgba(255,154,0,0.15);">🚀</div>
+                <div class="feature-icon" style="background:rgba(255,154,0,0.1);border:1px solid rgba(255,154,0,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ff9a00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
                 <h3>One-Click Use</h3>
                 <p>No complicated commands. Just send a file to the bot and get your links instantly in seconds.</p>
             </div>
@@ -1939,7 +1939,7 @@ HOME_PAGE = """<!DOCTYPE html>
 
     <div class="footer">
         <div class="footer-text">
-            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By <a href="https://t.me/ZEUS_IS_HERE2">Zeus</a> ⚡
+            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By <a href="https://t.me/ZEUS_IS_HERE2">Zeus</a> <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
     </div>
 </body>
@@ -2023,7 +2023,7 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ File To Link Bot - Download</title>
+    <title>File To Link Bot - Download</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
@@ -2130,7 +2130,7 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
 <body>
     <nav style="position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:999;">
         <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-            <div style="width:34px;height:34px;background:linear-gradient(135deg,#ffd700,#ff9a00);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 10px rgba(255,215,0,0.2);">⚡</div>
+            <div style="width:34px;height:34px;background:linear-gradient(135deg,#ffd700,#ff9a00);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(255,215,0,0.2);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
             <span style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.3px;">File To Link</span>
         </a>
         <a href="/" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:9px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
@@ -2138,7 +2138,7 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
         </a>
     </nav>
     <div class="container" style="margin-top:70px;">
-        <div class="logo">⚡</div>
+        <div class="logo"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
         <div class="brand">File To Link Bot</div>
         <div class="tagline">Fast & Secure File Sharing</div>
         <div class="file-card">
@@ -2170,13 +2170,13 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
         </a>
         {watch_button}
         <div class="stats-row">
-            <span class="stat-badge">🔒 Secure</span>
-            <span class="stat-badge">⚡ Fast</span>
-            <span class="stat-badge">🌐 Direct</span>
+            <span class="stat-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Secure</span>
+            <span class="stat-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Fast</span>
+            <span class="stat-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Direct</span>
         </div>
-        <a href="https://t.me/ZEUS_IS_HERE2" target="_blank" style="display:block;text-align:center;margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,154,0,0.1);border:1px solid rgba(255,154,0,0.2);color:#ff9a00;text-decoration:none;font-weight:600;font-size:13px;">☕ Buy Me a Coffee</a>
+        <a href="https://t.me/ZEUS_IS_HERE2" target="_blank" style="display:block;text-align:center;margin-top:16px;padding:12px;border-radius:12px;background:rgba(255,154,0,0.1);border:1px solid rgba(255,154,0,0.2);color:#ff9a00;text-decoration:none;font-weight:600;font-size:13px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>Buy Me a Coffee</a>
         <div class="footer">
-            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
+            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
     </div>
     <script>
@@ -2191,9 +2191,9 @@ DOWNLOAD_PAGE_TEMPLATE = """<!DOCTYPE html>
             progress.style.width = ((10 - seconds) / 10 * 100) + '%';
             if (seconds <= 0) {{
                 clearInterval(interval);
-                countdown.innerHTML = '✅ Ready to download!';
+                countdown.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><polyline points="20 6 9 17 4 12"/></svg>Ready to download!';
                 btn.classList.remove('disabled');
-                btn.textContent = '📥 DOWNLOAD NOW';
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>DOWNLOAD NOW';
                 btn.style.pointerEvents = 'auto';
                 btn.addEventListener('click', function(e) {{
                     e.preventDefault();
@@ -2211,7 +2211,7 @@ NOT_FOUND_PAGE = """<!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ File Not Found</title>
+    <title>File Not Found - File To Link Bot</title>
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
@@ -2254,13 +2254,13 @@ NOT_FOUND_PAGE = """<!DOCTYPE html>
 </head>
 <body>
     <div class="container">
-        <div class="logo">⚡</div>
+        <div class="logo"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
         <div class="brand">File To Link Bot</div>
         <div class="tagline">Fast & Secure File Sharing</div>
-        <div class="not-found">❌ File not found or link expired</div>
-        <a href="https://t.me/Filetolinkzeus_bot" class="home-btn">🤖 Go to Bot</a>
+        <div class="not-found"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>File not found or link expired</div>
+        <a href="https://t.me/Filetolinkzeus_bot" class="home-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="#0a0a0f" stroke="none" style="vertical-align:middle;margin-right:4px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>Go to Bot</a>
         <div class="footer">
-            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
+            Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
         </div>
     </div>
 
@@ -2555,7 +2555,7 @@ async def watch_page(req):
 <body>
     <nav style="position:fixed;top:0;left:0;right:0;display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:rgba(10,10,15,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.06);z-index:999;">
         <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
-            <div style="width:34px;height:34px;background:linear-gradient(135deg,#ffd700,#ff9a00);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 10px rgba(255,215,0,0.2);">⚡</div>
+            <div style="width:34px;height:34px;background:linear-gradient(135deg,#ffd700,#ff9a00);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(255,215,0,0.2);"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0a0a0f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
             <span style="color:#fff;font-size:15px;font-weight:700;letter-spacing:-0.3px;">File To Link</span>
         </a>
         <a href="/" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);border-radius:9px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
@@ -2567,15 +2567,15 @@ async def watch_page(req):
             <video id="player" controls autoplay playsinline preload="auto"></video>
         </div>
         <div class="video-info">
-            <div class="video-title">🎬 {name}</div>
+            <div class="video-title"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><polygon points="5 3 19 12 5 21 5 3"/></svg>{name}</div>
             <div class="video-meta">
-                <span>📦 {size_display}</span>
+                <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>{size_display}</span>
                 <span>🎞️ {ext.upper()}</span>
-                <span>⏱️ {duration_display}</span>
+                <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:3px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>{duration_display}</span>
             </div>
             <div id="status-bar" class="tip" style="display:none;"></div>
             <div class="btn-row">
-                <a href="/download/{file_hash}" class="dl-btn">📥 Download</a>
+                <a href="/download/{file_hash}" class="dl-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download</a>
             </div>
             <div style="margin-top:20px;">
                 <div style="color:rgba(255,255,255,0.4);font-size:11px;text-transform:uppercase;letter-spacing:2px;font-weight:600;margin-bottom:12px;">External Players</div>
@@ -2699,7 +2699,7 @@ async def watch_page(req):
         }}, 20000);
     </script>
     <div class="footer">
-        Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus ⚡
+        Powered by <a href="https://t.me/Filetolinkzeus_bot">@Filetolinkzeus_bot</a> — By Zeus <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
     </div>
 </body>
 </html>"""
