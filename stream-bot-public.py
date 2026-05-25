@@ -1945,8 +1945,36 @@ HOME_PAGE = """<!DOCTYPE html>
 </body>
 </html>"""
 
+async def log_visitor(req, page="Homepage"):
+    """Log visitor details to LOG_CHANNEL"""
+    if not LOG_CHANNEL:
+        return
+    try:
+        ip = req.headers.get('CF-Connecting-IP') or req.headers.get('X-Forwarded-For', '').split(',')[0].strip() or req.remote
+        country = req.headers.get('CF-IPCountry', 'Unknown')
+        ua = req.headers.get('User-Agent', 'Unknown')
+        # Shorten user agent
+        if len(ua) > 80:
+            ua = ua[:80] + '...'
+        referer = req.headers.get('Referer', 'Direct')
+        path = req.path
+        
+        log_text = (
+            f"🌐 <b>Site Visitor</b>\n\n"
+            f"📄 <b>Page:</b> {page}\n"
+            f"🔗 <b>Path:</b> <code>{path}</code>\n"
+            f"🌍 <b>IP:</b> <code>{ip}</code>\n"
+            f"🏳️ <b>Country:</b> {country}\n"
+            f"📱 <b>Device:</b> <code>{ua}</code>\n"
+            f"↩️ <b>Referer:</b> {referer}"
+        )
+        await bot.send_message(LOG_CHANNEL, log_text, parse_mode=enums.ParseMode.HTML)
+    except:
+        pass
+
 @routes.get('/')
 async def home(req):
+    await log_visitor(req, "🏠 Homepage")
     html = HOME_PAGE.format(
         total_users=len(stats['total_users']),
         total_files=stats['total_files']
@@ -2250,6 +2278,7 @@ async def download_page(req):
     info = file_map[file_hash]
     name = info['name']
     size = info['size']
+    await log_visitor(req, f"📥 Download — {name}")
     
     # Size display
     if size >= 1024 * 1024 * 1024:
@@ -2373,6 +2402,7 @@ async def watch_page(req):
     info = file_map[file_hash]
     name = info['name']
     size = info['size']
+    await log_visitor(req, f"🎬 Watch — {name}")
     duration = info.get('duration', 0)
     
     if size >= 1024 * 1024 * 1024:
