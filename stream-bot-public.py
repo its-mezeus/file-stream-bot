@@ -1369,12 +1369,10 @@ Just send and get link!
             if LOG_CHANNEL:
                 user = query.from_user
                 log_text = (
-                    f"<b>🗑️ Link Revoked</b>\n"
-                    f"<code>"
-                    f"User : {user.first_name} [{user.id}]\n"
-                    f"File : {name}\n"
-                    f"Hash : {file_hash}"
-                    f"</code>"
+                    f"🗑️ <b>Link Revoked</b>\n\n"
+                    f"&gt; 👤 <b>User:</b> {user.first_name} [{user.id}]\n\n"
+                    f"&gt; 📄 <b>File:</b> {name}\n\n"
+                    f"&gt; 🔗 <b>Hash:</b> {file_hash}"
                 )
                 try:
                     await bot.send_message(LOG_CHANNEL, log_text, parse_mode=enums.ParseMode.HTML)
@@ -1962,15 +1960,13 @@ async def log_visitor(req, page="Homepage"):
         path = req.path
         
         log_text = (
-            f"<b>🌐 Site Visitor</b>\n"
-            f"<code>"
-            f"Page    : {page}\n"
-            f"Path    : {path}\n"
-            f"IP      : {ip}\n"
-            f"Country : {country}\n"
-            f"Device  : {ua}\n"
-            f"Referer : {referer}"
-            f"</code>"
+            f"🌐 <b>Site Visitor</b>\n\n"
+            f"&gt; 📄 <b>Page:</b> {page}\n\n"
+            f"&gt; 🔗 <b>Path:</b> {path}\n\n"
+            f"&gt; 🌍 <b>IP:</b> {ip}\n\n"
+            f"&gt; 🏳️ <b>Country:</b> {country}\n\n"
+            f"&gt; 📱 <b>Device:</b> {ua}\n\n"
+            f"&gt; ↩️ <b>Referer:</b> {referer}"
         )
         await bot.send_message(LOG_CHANNEL, log_text, parse_mode=enums.ParseMode.HTML)
     except:
@@ -2846,14 +2842,12 @@ async def stream_file(req):
                     else:
                         sz = f"{file_size / 1024:.2f} KB"
                     dl_log = (
-                        f"<b>📥 Download Started</b>\n"
-                        f"<code>"
-                        f"File    : {info['name']}\n"
-                        f"Size    : {sz}\n"
-                        f"IP      : {ip}\n"
-                        f"Country : {country}\n"
-                        f"Device  : {ua}"
-                        f"</code>"
+                        f"📥 <b>Download Started</b>\n\n"
+                        f"&gt; 📄 <b>File:</b> {info['name']}\n\n"
+                        f"&gt; 💾 <b>Size:</b> {sz}\n\n"
+                        f"&gt; 🌍 <b>IP:</b> {ip}\n\n"
+                        f"&gt; 🏳️ <b>Country:</b> {country}\n\n"
+                        f"&gt; 📱 <b>Device:</b> {ua}"
                     )
                     await bot.send_message(LOG_CHANNEL, dl_log, parse_mode=enums.ParseMode.HTML)
                 except:
