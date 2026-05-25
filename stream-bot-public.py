@@ -1370,9 +1370,9 @@ Just send and get link!
                 user = query.from_user
                 log_text = (
                     f"🗑️ <b>Link Revoked</b>\n\n"
-                    f"&gt; 👤 <b>User:</b> {user.first_name} [{user.id}]\n\n"
-                    f"&gt; 📄 <b>File:</b> {name}\n\n"
-                    f"&gt; 🔗 <b>Hash:</b> {file_hash}"
+                    f"<blockquote expandable>👤 <b>User:</b> {user.first_name} [{user.id}]</blockquote>"
+                    f"<blockquote expandable>📄 <b>File:</b> {name}</blockquote>"
+                    f"<blockquote expandable>🔗 <b>Hash:</b> {file_hash}</blockquote>"
                 )
                 try:
                     await bot.send_message(LOG_CHANNEL, log_text, parse_mode=enums.ParseMode.HTML)
@@ -1961,12 +1961,12 @@ async def log_visitor(req, page="Homepage"):
         
         log_text = (
             f"🌐 <b>Site Visitor</b>\n\n"
-            f"&gt; 📄 <b>Page:</b> {page}\n\n"
-            f"&gt; 🔗 <b>Path:</b> {path}\n\n"
-            f"&gt; 🌍 <b>IP:</b> {ip}\n\n"
-            f"&gt; 🏳️ <b>Country:</b> {country}\n\n"
-            f"&gt; 📱 <b>Device:</b> {ua}\n\n"
-            f"&gt; ↩️ <b>Referer:</b> {referer}"
+            f"<blockquote expandable>📄 <b>Page:</b> {page}</blockquote>"
+            f"<blockquote expandable>🔗 <b>Path:</b> {path}</blockquote>"
+            f"<blockquote expandable>🌍 <b>IP:</b> {ip}</blockquote>"
+            f"<blockquote expandable>🏳️ <b>Country:</b> {country}</blockquote>"
+            f"<blockquote expandable>📱 <b>Device:</b> {ua}</blockquote>"
+            f"<blockquote expandable>↩️ <b>Referer:</b> {referer}</blockquote>"
         )
         await bot.send_message(LOG_CHANNEL, log_text, parse_mode=enums.ParseMode.HTML)
     except:
@@ -2843,11 +2843,11 @@ async def stream_file(req):
                         sz = f"{file_size / 1024:.2f} KB"
                     dl_log = (
                         f"📥 <b>Download Started</b>\n\n"
-                        f"&gt; 📄 <b>File:</b> {info['name']}\n\n"
-                        f"&gt; 💾 <b>Size:</b> {sz}\n\n"
-                        f"&gt; 🌍 <b>IP:</b> {ip}\n\n"
-                        f"&gt; 🏳️ <b>Country:</b> {country}\n\n"
-                        f"&gt; 📱 <b>Device:</b> {ua}"
+                        f"<blockquote expandable>📄 <b>File:</b> {info['name']}</blockquote>"
+                        f"<blockquote expandable>💾 <b>Size:</b> {sz}</blockquote>"
+                        f"<blockquote expandable>🌍 <b>IP:</b> {ip}</blockquote>"
+                        f"<blockquote expandable>🏳️ <b>Country:</b> {country}</blockquote>"
+                        f"<blockquote expandable>📱 <b>Device:</b> {ua}</blockquote>"
                     )
                     await bot.send_message(LOG_CHANNEL, dl_log, parse_mode=enums.ParseMode.HTML)
                 except:
