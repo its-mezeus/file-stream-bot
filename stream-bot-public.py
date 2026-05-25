@@ -2740,33 +2740,10 @@ async def stream_file(req):
         is_stream = '/watch/' in referer or req.query.get('play') == '1'
         content_type = video_mimes.get(ext, 'application/octet-stream') if is_stream else 'application/octet-stream'
         
-        # Log download start (only first request, not range continuations or streams)
+        # Prepare download log info (will be sent after first chunk)
         range_hdr = req.headers.get('Range', '')
-        is_first_request = not range_hdr or range_hdr == 'bytes=0-'
-        if is_first_request and not is_stream and LOG_CHANNEL:
-            try:
-                ip = req.headers.get('CF-Connecting-IP') or req.headers.get('X-Forwarded-For', '').split(',')[0].strip() or req.remote
-                country = req.headers.get('CF-IPCountry', 'Unknown')
-                ua = req.headers.get('User-Agent', 'Unknown')
-                if len(ua) > 80:
-                    ua = ua[:80] + '...'
-                if file_size >= 1024 * 1024 * 1024:
-                    sz = f"{file_size / (1024**3):.2f} GB"
-                elif file_size >= 1024 * 1024:
-                    sz = f"{file_size / (1024**2):.2f} MB"
-                else:
-                    sz = f"{file_size / 1024:.2f} KB"
-                dl_log = (
-                    f"📥 <b>Download Started</b>\n\n"
-                    f"📄 <b>File:</b> {info['name']}\n"
-                    f"💾 <b>Size:</b> {sz}\n"
-                    f"🌍 <b>IP:</b> <code>{ip}</code>\n"
-                    f"🏳️ <b>Country:</b> {country}\n"
-                    f"📱 <b>Device:</b> <code>{ua}</code>"
-                )
-                await bot.send_message(LOG_CHANNEL, dl_log, parse_mode=enums.ParseMode.HTML)
-            except:
-                pass
+        _is_first_request = not range_hdr or range_hdr == 'bytes=0-'
+        _dl_logged = False
         if is_stream:
             disposition = f'inline; filename="{safe_name}"'
         
@@ -2848,6 +2825,33 @@ async def stream_file(req):
                 data = data[:remaining]
             
             await response.write(data)
+            
+            # Log after first chunk is sent (download truly started)
+            if not _dl_logged and _is_first_request and not is_stream and LOG_CHANNEL:
+                _dl_logged = True
+                try:
+                    ip = req.headers.get('CF-Connecting-IP') or req.headers.get('X-Forwarded-For', '').split(',')[0].strip() or req.remote
+                    country = req.headers.get('CF-IPCountry', 'Unknown')
+                    ua = req.headers.get('User-Agent', 'Unknown')
+                    if len(ua) > 80:
+                        ua = ua[:80] + '...'
+                    if file_size >= 1024 * 1024 * 1024:
+                        sz = f"{file_size / (1024**3):.2f} GB"
+                    elif file_size >= 1024 * 1024:
+                        sz = f"{file_size / (1024**2):.2f} MB"
+                    else:
+                        sz = f"{file_size / 1024:.2f} KB"
+                    dl_log = (
+                        f"📥 <b>Download Started</b>\n\n"
+                        f"📄 <b>File:</b> {info['name']}\n"
+                        f"💾 <b>Size:</b> {sz}\n"
+                        f"🌍 <b>IP:</b> <code>{ip}</code>\n"
+                        f"🏳️ <b>Country:</b> {country}\n"
+                        f"📱 <b>Device:</b> <code>{ua}</code>"
+                    )
+                    await bot.send_message(LOG_CHANNEL, dl_log, parse_mode=enums.ParseMode.HTML)
+                except:
+                    pass
             bytes_sent += len(data)
         
         await response.write_eof()
