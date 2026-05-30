@@ -1974,7 +1974,6 @@ async def log_visitor(req, page="Homepage"):
 
 @routes.get('/')
 async def home(req):
-    await log_visitor(req, "🏠 Homepage")
     html = HOME_PAGE.format(
         total_users=len(stats['total_users']),
         total_files=stats['total_files']
