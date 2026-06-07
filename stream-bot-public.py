@@ -18,6 +18,435 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s - %(message)s')
 
+# ----------------------------
+# Premium Animated Emoji
+# ----------------------------
+PREMIUM_EMOJI_IDS = {
+    "⚡": "4958479549265347295",
+    "🌟": "5388830217148063537",
+    "⭐": "5388830217148063537",
+    "📎": "4967656361073574498",
+    "🌐": "4969799614178788098",
+    "💪": "5463413771647069835",
+    "📥": "5859241651318297347",
+    "✅": "5123163417326126159",
+    "❌": "4958526153955476488",
+    "👋": "5462910521739063094",
+    "🏓": "5269563867305879894",
+    "📊": "5431577498364158238",
+    "⏰": "4967525849902350972",
+    "⏱": "5373236586760651455",
+    "⏳": "5215327832040811010",
+    "⏸": "4956442665320186933",
+    "▶": "4956583802240500602",
+    "☕": "5246949837995267651",
+    "⚙": "5341715473882955310",
+    "⚠": "5447644880824181073",
+    "✨": "4956436416142771580",
+    "❓": "5436113877181941026",
+    "❤": "4970032714938843839",
+    "♾": "4927154609018897632",
+    "➕": "4956507094124594921",
+    "➖": "5229113891081956317",
+    "🆔": "6035239240625820254",
+    "🆕": "4956287101604725699",
+    "🆘": "6301027265899661025",
+    "🎞": "5886611704074211406",
+    "🎬": "5375464961822695044",
+    "🎵": "4970133401857163956",
+    "🏠": "4970038633403777664",
+    "🚩": "4969862428075491925",
+    "👤": "4967667085606912536",
+    "👥": "5453957997418004470",
+    "💬": "5443038326535759644",
+    "💰": "4958926882994127612",
+    "💻": "5431376038628171216",
+    "📀": "5462956611033117422",
+    "💿": "5215352343419167936",
+    "📁": "5433653135799228968",
+    "📄": "5888814562735558615",
+    "🗓": "5413879192267805083",
+    "📋": "6154222749691679144",
+    "📌": "4956232383721374836",
+    "📝": "5033080906403808074",
+    "📞": "4969971262546772590",
+    "📢": "4967957395331351254",
+    "📤": "5433614747381538714",
+    "🗂": "5332586662629227075",
+    "✉": "5253742260054409879",
+    "📱": "5407025283456835913",
+    "📲": "5406809207947142040",
+    "🔂": "5395851921741343669",
+    "🔐": "6106969768609188508",
+    "🔒": "5296369303661067030",
+    "🔗": "4958689671950369798",
+    "🔙": "5253997076169115797",
+    "🛠": "5462921117423384478",
+    "🔴": "5411225014148014586",
+    "🖼": "5033108527338488459",
+    "🗑": "5033287275287413303",
+    "🙏": "5472189549473963781",
+    "🚀": "5780773956030043338",
+    "🚫": "4956337889593000947",
+    "🤖": "5372981976804366741",
+}
+
+def premium_emoji(text: str) -> str:
+    """Replace regular emoji with animated premium emoji HTML tags."""
+    if not text:
+        return text
+    result = text
+    for emoji, emoji_id in PREMIUM_EMOJI_IDS.items():
+        result = result.replace(
+            emoji,
+            f'<tg-emoji emoji-id="{emoji_id}">{emoji}</tg-emoji>'
+        )
+    return result
+
+async def _bot_api_send(chat_id, text, reply_markup=None, reply_to_message_id=None):
+    """Send message via Bot API directly (supports animated custom emoji)."""
+    import aiohttp as _aiohttp
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": text,
+        "parse_mode": "HTML",
+    }
+    if reply_to_message_id:
+        payload["reply_to_message_id"] = reply_to_message_id
+    if reply_markup:
+        import json
+        payload["reply_markup"] = json.dumps(reply_markup)
+    async with _aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload) as resp:
+            return await resp.json()
+
+def _pyrogram_kb_to_api(kb):
+    """Convert Pyrogram InlineKeyboardMarkup to Bot API dict."""
+    if not kb:
+        return None
+    rows = []
+    for row in kb.inline_keyboard:
+        api_row = []
+        for btn in row:
+            b = {"text": btn.text}
+            if btn.callback_data:
+                b["callback_data"] = btn.callback_data
+            elif btn.url:
+                b["url"] = btn.url
+            api_row.append(b)
+        rows.append(api_row)
+    return {"inline_keyboard": rows}
+
+async def _bot_api_edit(chat_id, message_id, text, reply_markup=None):
+    """Edit message via Bot API directly (supports animated custom emoji)."""
+    import aiohttp as _aiohttp
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/editMessageText"
+    payload = {
+        "chat_id": chat_id,
+        "message_id": message_id,
+        "text": text,
+        "parse_mode": "HTML",
+    }
+    if reply_markup:
+        import json
+        payload["reply_markup"] = json.dumps(reply_markup)
+    async with _aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload) as resp:
+            return await resp.json()
+
+async def _bot_api_answer_callback(callback_query_id, text=None, show_alert=False):
+    """Answer callback query via Bot API."""
+    import aiohttp as _aiohttp
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/answerCallbackQuery"
+    payload = {"callback_query_id": callback_query_id}
+    if text:
+        payload["text"] = text
+    if show_alert:
+        payload["show_alert"] = True
+    async with _aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload) as resp:
+            return await resp.json()
+
+async def _userbot_send_premium(chat_id, text):
+    """Send message via userbot raw API with animated custom emoji entities.
+    Used for channels where bot can't render custom emoji."""
+    from pyrogram.raw.functions.messages import SendMessage as RawSendMessage
+    from pyrogram.raw.types import MessageEntityCustomEmoji as RawCustomEmoji
+    from pyrogram.raw.types import (
+        MessageEntityBold, MessageEntityItalic, MessageEntityCode,
+        MessageEntityPre, MessageEntityTextUrl, MessageEntityUnderline,
+        MessageEntityStrike, MessageEntityMention
+    )
+    import html as _html
+    
+    # Parse HTML manually to extract text + entities
+    plain = ""
+    entities = []
+    i = 0
+    tag_stack = []
+    
+    while i < len(text):
+        if text[i] == '<':
+            end = text.find('>', i)
+            if end == -1:
+                plain += text[i]
+                i += 1
+                continue
+            tag_content = text[i+1:end]
+            
+            # Closing tag
+            if tag_content.startswith('/'):
+                tag_name = tag_content[1:].strip().lower()
+                # Find matching open tag
+                for j in range(len(tag_stack)-1, -1, -1):
+                    if tag_stack[j][0] == tag_name:
+                        start_pos = tag_stack[j][1]
+                        length = len(plain) - start_pos
+                        if tag_name == 'b' or tag_name == 'strong':
+                            entities.append(MessageEntityBold(offset=start_pos, length=length))
+                        elif tag_name == 'i' or tag_name == 'em':
+                            entities.append(MessageEntityItalic(offset=start_pos, length=length))
+                        elif tag_name == 'code':
+                            entities.append(MessageEntityCode(offset=start_pos, length=length))
+                        elif tag_name == 'u':
+                            entities.append(MessageEntityUnderline(offset=start_pos, length=length))
+                        elif tag_name == 's' or tag_name == 'strike' or tag_name == 'del':
+                            entities.append(MessageEntityStrike(offset=start_pos, length=length))
+                        elif tag_name == 'a':
+                            url = tag_stack[j][2] if len(tag_stack[j]) > 2 else ""
+                            if url.startswith('tg://user?id='):
+                                pass  # text mention — skip for now
+                            elif url:
+                                entities.append(MessageEntityTextUrl(offset=start_pos, length=length, url=url))
+                        elif tag_name == 'tg-emoji':
+                            emoji_id = tag_stack[j][2] if len(tag_stack[j]) > 2 else None
+                            if emoji_id:
+                                entities.append(RawCustomEmoji(offset=start_pos, length=length, document_id=int(emoji_id)))
+                        tag_stack.pop(j)
+                        break
+                i = end + 1
+                continue
+            
+            # Self-closing or opening tag
+            tag_lower = tag_content.lower().strip()
+            if tag_lower.startswith('b') and (len(tag_lower) == 1 or not tag_lower[1:].strip().startswith('r')):
+                tag_stack.append(('b', len(plain)))
+            elif tag_lower.startswith('strong'):
+                tag_stack.append(('strong', len(plain)))
+            elif tag_lower.startswith('i') and (len(tag_lower) == 1 or tag_lower[1:].strip()[0:1] in ('', '>')):
+                tag_stack.append(('i', len(plain)))
+            elif tag_lower.startswith('em'):
+                tag_stack.append(('em', len(plain)))
+            elif tag_lower.startswith('code'):
+                tag_stack.append(('code', len(plain)))
+            elif tag_lower.startswith('u') and (len(tag_lower) == 1 or tag_lower[1:].strip()[0:1] in ('', '>')):
+                tag_stack.append(('u', len(plain)))
+            elif tag_lower.startswith('s') and (len(tag_lower) == 1 or tag_lower[1:].strip()[0:1] in ('', '>')):
+                tag_stack.append(('s', len(plain)))
+            elif tag_lower.startswith('a '):
+                import re as _re
+                href_match = _re.search(r'href=["\']([^"\']+)["\']', tag_content)
+                url = href_match.group(1) if href_match else ""
+                tag_stack.append(('a', len(plain), url))
+            elif tag_lower.startswith('tg-emoji'):
+                import re as _re
+                eid_match = _re.search(r'emoji-id=["\'](\d+)["\']', tag_content)
+                eid = eid_match.group(1) if eid_match else None
+                tag_stack.append(('tg-emoji', len(plain), eid))
+            
+            i = end + 1
+            continue
+        elif text[i] == '&':
+            # HTML entities
+            if text[i:i+4] == '&lt;':
+                plain += '<'
+                i += 4
+            elif text[i:i+4] == '&gt;':
+                plain += '>'
+                i += 4
+            elif text[i:i+5] == '&amp;':
+                plain += '&'
+                i += 5
+            elif text[i:i+6] == '&quot;':
+                plain += '"'
+                i += 6
+            else:
+                plain += text[i]
+                i += 1
+        else:
+            plain += text[i]
+            i += 1
+    
+    # Convert Python string offsets to UTF-16 offsets (Telegram uses UTF-16)
+    def _to_utf16_offset(text, py_offset):
+        return len(text[:py_offset].encode('utf-16-le')) // 2
+    
+    def _to_utf16_length(text, py_offset, py_length):
+        return len(text[py_offset:py_offset+py_length].encode('utf-16-le')) // 2
+    
+    utf16_entities = []
+    for ent in entities:
+        if hasattr(ent, 'offset'):
+            # Already a raw type — convert offsets
+            old_offset = ent.offset
+            old_length = ent.length
+            ent.offset = _to_utf16_offset(plain, old_offset)
+            ent.length = _to_utf16_length(plain, old_offset, old_length)
+        utf16_entities.append(ent)
+    
+    try:
+        peer = await userbot.resolve_peer(chat_id)
+        from pyrogram.raw.functions.messages import SendMessage as _RawSend
+        result = await userbot.invoke(
+            _RawSend(
+                peer=peer,
+                message=plain,
+                random_id=userbot.rnd_id(),
+                entities=utf16_entities if utf16_entities else None,
+            )
+        )
+        return {"ok": True, "result": result}
+    except Exception as e:
+        logging.error(f"Userbot send failed: {e}")
+        return {"ok": False, "error": str(e)}
+
+async def _bot_api_delete(chat_id, message_id):
+    """Delete message via Bot API."""
+    import aiohttp as _aiohttp
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/deleteMessage"
+    payload = {"chat_id": chat_id, "message_id": message_id}
+    async with _aiohttp.ClientSession() as session:
+        async with session.post(url, json=payload) as resp:
+            return await resp.json()
+
+async def _bot_api_send_document(chat_id, file_path, caption=None, reply_markup=None, reply_to_message_id=None):
+    """Send document via Bot API (supports animated emoji in caption)."""
+    import aiohttp as _aiohttp
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendDocument"
+    data = _aiohttp.FormData()
+    data.add_field('chat_id', str(chat_id))
+    if caption:
+        data.add_field('caption', caption)
+        data.add_field('parse_mode', 'HTML')
+    if reply_to_message_id:
+        data.add_field('reply_to_message_id', str(reply_to_message_id))
+    if reply_markup:
+        import json
+        data.add_field('reply_markup', json.dumps(reply_markup))
+    data.add_field('document', open(file_path, 'rb'), filename=Path(file_path).name)
+    async with _aiohttp.ClientSession() as session:
+        async with session.post(url, data=data) as resp:
+            return await resp.json()
+
+# ----------------------------
+# Monkey-patch Pyrogram to use Bot API for animated emoji
+# ----------------------------
+import pyrogram.types.messages_and_media.message as _pyro_msg_module
+
+_original_reply = _pyro_msg_module.Message.reply
+_original_edit = _pyro_msg_module.Message.edit_text if hasattr(_pyro_msg_module.Message, 'edit_text') else None
+
+async def _patched_reply(self, text, *args, **kwargs):
+    """Patched reply that uses Bot API for HTML messages to support animated emoji."""
+    parse_mode = kwargs.get('parse_mode', None)
+    if parse_mode == enums.ParseMode.HTML and isinstance(text, str):
+        reply_markup = kwargs.get('reply_markup', None)
+        api_markup = _pyrogram_kb_to_api(reply_markup) if reply_markup else None
+        result = await _bot_api_send(
+            self.chat.id,
+            premium_emoji(text),
+            reply_markup=api_markup,
+            reply_to_message_id=self.id
+        )
+        if result and result.get('ok'):
+            # Return a fake-ish message object with the message_id for edit tracking
+            msg_data = result['result']
+            # Try to fetch as Pyrogram message for full compatibility
+            try:
+                return await self._client.get_messages(self.chat.id, msg_data['message_id'])
+            except Exception:
+                return self  # fallback
+        else:
+            # Fallback to original
+            return await _original_reply(self, text, *args, **kwargs)
+    return await _original_reply(self, text, *args, **kwargs)
+
+_pyro_msg_module.Message.reply = _patched_reply
+
+# Also patch reply_text (alias)
+if hasattr(_pyro_msg_module.Message, 'reply_text'):
+    _original_reply_text = _pyro_msg_module.Message.reply_text
+    _pyro_msg_module.Message.reply_text = _patched_reply
+
+# Patch Message.edit / edit_text
+_original_edit_method = _pyro_msg_module.Message.edit if hasattr(_pyro_msg_module.Message, 'edit') else None
+
+async def _patched_edit(self, text=None, *args, **kwargs):
+    """Patched edit that uses Bot API for HTML messages to support animated emoji."""
+    parse_mode = kwargs.get('parse_mode', None)
+    if parse_mode == enums.ParseMode.HTML and isinstance(text, str):
+        reply_markup = kwargs.get('reply_markup', None)
+        api_markup = _pyrogram_kb_to_api(reply_markup) if reply_markup else None
+        result = await _bot_api_edit(
+            self.chat.id,
+            self.id,
+            premium_emoji(text),
+            reply_markup=api_markup
+        )
+        if result and result.get('ok'):
+            try:
+                return await self._client.get_messages(self.chat.id, self.id)
+            except Exception:
+                return self
+        elif _original_edit_method:
+            return await _original_edit_method(self, text, *args, **kwargs)
+    if _original_edit_method:
+        return await _original_edit_method(self, text, *args, **kwargs)
+
+if _original_edit_method:
+    _pyro_msg_module.Message.edit = _patched_edit
+if hasattr(_pyro_msg_module.Message, 'edit_text'):
+    _pyro_msg_module.Message.edit_text = _patched_edit
+
+# Patch client.send_message too
+import pyrogram.client as _pyro_client_module
+
+_original_send_message = _pyro_client_module.Client.send_message
+
+async def _patched_send_message(self, chat_id, text, *args, **kwargs):
+    """Patched send_message that uses Bot API or userbot for animated emoji."""
+    parse_mode = kwargs.get('parse_mode', None)
+    if parse_mode == enums.ParseMode.HTML and isinstance(text, str):
+        pe_text = premium_emoji(text)
+        # For log channel (or any channel), use userbot with raw API for animated emoji
+        if isinstance(chat_id, int) and chat_id < 0:
+            result = await _userbot_send_premium(chat_id, pe_text)
+            if result and result.get('ok'):
+                return None  # userbot send doesn't return Pyrogram message
+            # Fallback to bot API
+        reply_markup = kwargs.get('reply_markup', None)
+        api_markup = _pyrogram_kb_to_api(reply_markup) if reply_markup else None
+        reply_to = kwargs.get('reply_to_message_id', None)
+        result = await _bot_api_send(
+            chat_id,
+            pe_text,
+            reply_markup=api_markup,
+            reply_to_message_id=reply_to
+        )
+        if result and result.get('ok'):
+            try:
+                return await self.get_messages(chat_id, result['result']['message_id'])
+            except Exception:
+                return None
+        else:
+            return await _original_send_message(self, chat_id, text, *args, **kwargs)
+    return await _original_send_message(self, chat_id, text, *args, **kwargs)
+
+_pyro_client_module.Client.send_message = _patched_send_message
+
+logging.info("✨ Premium emoji patches applied — all bot messages use animated emoji")
+
 # Config - Load from environment variables
 API_ID = int(os.getenv('API_ID', '0'))
 API_HASH = os.getenv('API_HASH', '')
